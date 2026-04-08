@@ -1,0 +1,11 @@
+{
+  "name": "lily-app",
+  "version": "1.0.0",
+  "description": "Lily — your quit coach",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
