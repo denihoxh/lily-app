@@ -9,7 +9,6 @@ Base URL: `https://lily-app-xi.vercel.app/api/pipeline`
 ```bash
 curl -X POST https://lily-app-xi.vercel.app/api/pipeline \
   -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_ANTHROPIC_KEY" \
   -d '{
     "craving": 8,
     "stress": 7,
@@ -59,7 +58,7 @@ curl -X POST https://lily-app-xi.vercel.app/api/pipeline \
 | `custom_agents.intervene` | string | — | Custom system prompt for Intervention Agent |
 | `custom_agents.orch` | string | — | Custom system prompt for Orchestrator Agent |
 
-**Auth:** Pass your Anthropic API key as `x-api-key` header, `Authorization: Bearer <key>`, or `api_key` in the body.
+**Auth:** No auth required — the pipeline API key is managed server-side. For custom agent overrides, you may optionally pass your own Groq key as `api_key` in the body.
 
 ---
 
@@ -118,7 +117,6 @@ def lily_craving_intervention(craving: int, stress: int, context: str, api_key: 
         craving: Craving intensity 1-10
         stress: Stress level 0-10
         context: What's happening right now (e.g. 'After coffee, work stress')
-        api_key: Anthropic API key
     """
     result = requests.post(
         "https://lily-app-xi.vercel.app/api/pipeline",
@@ -145,9 +143,9 @@ def lily_craving_intervention(craving: int, stress: int, context: str, api_key: 
 
 # Use in a LangChain agent
 from langchain.agents import initialize_agent, AgentType
-from langchain_anthropic import ChatAnthropic
+from langchain_groq import ChatGroq
 
-llm = ChatAnthropic(model="claude-sonnet-4-20250514")
+llm = ChatGroq(model="llama-3.3-70b-versatile")
 tools = [lily_craving_intervention]
 
 agent = initialize_agent(
@@ -212,7 +210,7 @@ def lily_pipeline_function(craving: int, stress: int, contexts: list, api_key: s
     return result.get("summary", {})
 
 # Register as AutoGen function
-config_list = [{"model": "claude-sonnet-4-20250514", "api_key": "sk-ant-..."}]
+config_list = [{"model": "llama-3.3-70b-versatile", "api_key": "YOUR_GROQ_KEY"}]
 
 assistant = autogen.AssistantAgent(
     name="LilyCoach",

@@ -27,7 +27,7 @@ Run the full 4-agent pipeline for a nicotine craving event.
 | `stress` | integer 0–10 | ✅ | Stress level right now |
 | `contexts` | string[] | — | What's happening (e.g. "After coffee") |
 | `memory` | string[] | — | Prior event log entries (max 8) |
-| `api_key` | string | ✅ | Your Anthropic API key |
+| `api_key` | string | — | Optional — pipeline uses server-side key by default |
 
 ### Output
 
@@ -97,7 +97,7 @@ Log a moment and get an immediate coaching response.
 | Parameter | Type | Description |
 |---|---|---|
 | `type` | string | `"used"` / `"resisted"` / `"craving"` / `"stressed"` |
-| `api_key` | string | Your Anthropic API key |
+| `api_key` | string | Optional — omit to use server-side key |
 
 ### Behavior
 
