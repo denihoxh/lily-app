@@ -151,7 +151,7 @@ Key design decisions informed by clinical mentor **Jana Krystofova Mike, MD** (U
 - **Strategy monoculture:** The Intervention Agent defaults heavily to craving surfing. A diversity mechanism tied to prior strategy effectiveness is needed.
 - **Prediction calibration:** Risk scores cluster at 60–80% even for low-severity inputs. The Prediction Agent needs recalibration at the low end.
 - **No contradiction detection:** The User State Agent averages contradictory inputs rather than flagging them. An input validation layer is the next architectural priority.
-- **Rate limiting:** At the free Groq tier, 10+ concurrent pipelines hit the token-per-minute ceiling. Production deployment requires request queuing or a paid API tier.
+- **Rate limiting:** At high concurrency, the pipeline may hit API rate limits. Production deployment may require request queuing.
 - **Latency:** 4 sequential agent calls take ~12–15 seconds. Parallelizing User State + Prediction agents would cut this significantly.
 - **Self-reported inputs:** All craving and stress data is self-reported. Integration with biometric data (HRV, wearables) would improve prediction accuracy.
 

@@ -303,8 +303,7 @@ else:
 ## Rate Limits & Performance
 
 - Average latency: ~5-15 seconds (4 sequential LLM calls)
-- Groq alternative: Use Llama 3.3-70B via Groq for faster/cheaper calls (swap the model in your custom agent prompts)
-- Concurrent calls: Tested up to 10 concurrent pipelines (HW8 experiments)
+- Concurrent calls: Tested up to 10 concurrent pipelines
 - Memory: Pass up to 8 prior event strings for personalized interventions
 
 ---
