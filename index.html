@@ -695,8 +695,6 @@ let memory = [];
 let todayUses = 0, resisted = 0, streak = 4;
 let typing = false;
 let chosenLog = null;
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
 // API calls handled server-side via /api/chat and /api/pipeline
 let apiKey = 'server'; // key lives in Vercel env, not browser
 let customAgents = { state: null, predict: null, intervene: null, orch: null };
@@ -807,15 +805,14 @@ async function runAgenticPipeline(craving, stress, contexts) {
   switchRpTab('pipeline', document.getElementById('rp-pipeline'));
 
   const callLLM = async (system, user) => {
-
-    const res = await fetch(GROQ_URL, {
+    const res = await fetch('/api/chat', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({model:GROQ_MODEL,max_tokens:600,messages:[{role:'system',content:system},{role:'user',content:user}],temperature:0.7})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system, messages:[{role:'user',content:user}], max_tokens:600})
     });
     const d = await res.json();
-    if(d.error) throw new Error(d.error.message);
-    const txt = d.choices[0].message.content;
+    if(d.error) throw new Error(d.error);
+    const txt = d.content || '';
     try { return JSON.parse(txt.replace(/```json|```/g,'').trim()); }
     catch(e) { const m=txt.match(/\{[\s\S]*\}/); return m?JSON.parse(m[0]):null; }
   };
@@ -1040,7 +1037,7 @@ async function confirmLog() {
   typing=true;showTyping();await sleep(800);
   const finalMsg = orch?.final_message || msgs[type];
   rmTyping();
-  const response = apiKey ? finalMsg : await getConversationalReply(type, orch);
+  const response = finalMsg || await getConversationalReply(type, orch);
   addMsg('voli', typeof response === 'string' ? response : finalMsg);
   chatHistory.push({role:'assistant',content:typeof response === 'string' ? response : finalMsg});
   typing=false;
