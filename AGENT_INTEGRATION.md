@@ -69,11 +69,11 @@ import requests
 
 LILY_API = "https://lily-app-xi.vercel.app/api/pipeline"
 
-def run_lily_pipeline(craving: int, stress: int, contexts: list, memory: list = [], api_key: str = ""):
+def run_lily_pipeline(craving: int, stress: int, contexts: list, memory: list = []):
     """Run the full Lily 4-agent pipeline."""
     response = requests.post(
         LILY_API,
-        headers={"x-api-key": api_key, "Content-Type": "application/json"},
+        headers={"Content-Type": "application/json"},
         json={
             "craving": craving,
             "stress": stress,
@@ -120,7 +120,7 @@ def lily_craving_intervention(craving: int, stress: int, context: str, api_key: 
     """
     result = requests.post(
         "https://lily-app-xi.vercel.app/api/pipeline",
-        headers={"x-api-key": api_key},
+        headers={"Content-Type": "application/json"},
         json={
             "craving": craving,
             "stress": stress,
@@ -169,7 +169,7 @@ def lily_pipeline(craving: int, stress: int, contexts: list, api_key: str) -> di
     """Run the Lily 4-agent nicotine reduction pipeline."""
     return requests.post(
         "https://lily-app-xi.vercel.app/api/pipeline",
-        headers={"x-api-key": api_key},
+        headers={"Content-Type": "application/json"},
         json={"craving": craving, "stress": stress, "contexts": contexts}
     ).json()
 
@@ -204,7 +204,7 @@ def lily_pipeline_function(craving: int, stress: int, contexts: list, api_key: s
     """Run the Lily agentic pipeline."""
     result = requests.post(
         "https://lily-app-xi.vercel.app/api/pipeline",
-        headers={"x-api-key": api_key},
+        headers={"Content-Type": "application/json"},
         json={"craving": craving, "stress": stress, "contexts": contexts}
     ).json()
     return result.get("summary", {})
@@ -251,7 +251,7 @@ Override any of the 4 agents with your own system prompt. Your agent receives th
 ```python
 result = requests.post(
     "https://lily-app-xi.vercel.app/api/pipeline",
-    headers={"x-api-key": "sk-ant-..."},
+    headers={"Content-Type": "application/json"},
     json={
         "craving": 8,
         "stress": 7,

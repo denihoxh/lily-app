@@ -34,7 +34,6 @@ Lily's 4-agent pipeline is available as a REST API:
 
 ```
 POST https://lily-app-xi.vercel.app/api/pipeline
-x-api-key: YOUR_ANTHROPIC_KEY
 Content-Type: application/json
 
 {
