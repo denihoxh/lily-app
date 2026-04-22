@@ -238,7 +238,6 @@ footer a { color: var(--gold-d); text-decoration: none; }
   <div class="nav-links">
     <a href="#architecture">Architecture</a>
     <a href="#setup">Setup</a>
-    <a href="#experiments">Experiments</a>
     <a href="#limitations">Limitations</a>
     <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a>
   </div>
@@ -253,7 +252,6 @@ footer a { color: var(--gold-d); text-decoration: none; }
   <div class="hero-btns">
     <a href="https://lily-app-xi.vercel.app" class="btn-primary" target="_blank">Open App</a>
     <a href="https://github.com/denihoxh/lily-app" class="btn-secondary" target="_blank">View on GitHub</a>
-    <a href="https://www.youtube.com/watch?v=5iWd3WntZH4" class="btn-secondary" target="_blank">Watch Demo</a>
   </div>
 </section>
 
@@ -318,7 +316,7 @@ footer a { color: var(--gold-d); text-decoration: none; }
                                                                                     ↓
                                                               feeds back to User State Agent on next call</pre>
 
-    <p style="margin-top:16px"><strong style="color:var(--text)">Consumer app:</strong> Claude claude-sonnet-4-20250514 (Anthropic API) &nbsp;·&nbsp; <strong style="color:var(--text)">Experiment runner:</strong> Llama 3.3-70B (Groq)</p>
+    <p style="margin-top:16px"><strong style="color:var(--text)">Powered by:</strong> Claude claude-sonnet-4-20250514 via Anthropic API</p>
   </div>
 
   <!-- Setup -->
@@ -327,7 +325,7 @@ footer a { color: var(--gold-d); text-decoration: none; }
     <h2>Setup & Installation</h2>
     <p>Lily is a single-file HTML app with no build step. Clone the repo, add your API keys, and serve locally or deploy to Vercel.</p>
 
-    <p><strong style="color:var(--text)">Prerequisites:</strong> Node.js v18+, an Anthropic API key (consumer app), a Groq API key (experiment runners)</p>
+    <p><strong style="color:var(--text)">Prerequisites:</strong> Node.js v18+ and an Anthropic API key</p>
 
     <pre>git clone https://github.com/denihoxh/lily-app.git
 cd lily-app
@@ -336,52 +334,22 @@ npx serve .</pre>
 
     <p>Then open:</p>
     <pre>http://localhost:3000            # Consumer app
-http://localhost:3000/experiments  # HW7 experiment runner
-http://localhost:3000/lily_hw8.html # HW8 scaled experiments</pre>
+</pre>
 
     <p><strong style="color:var(--text)">Add your API keys</strong> — in <code>index.html</code> find the <code>getReply</code> function and replace the key:</p>
     <pre>'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE'</pre>
 
-    <p>For the experiment runners, replace at the top of each file:</p>
-    <pre>const GROQ_KEY = 'YOUR_GROQ_API_KEY_HERE';</pre>
 
     <p><strong style="color:var(--text)">Deploy to Vercel:</strong></p>
     <pre>npm install -g vercel
 vercel --prod</pre>
   </div>
 
-  <!-- Experiments -->
-  <div class="section fade-in" id="experiments">
-    <div class="section-label">What we tested</div>
-    <h2>Experiments</h2>
-    <p>Lily has been stress-tested across two rounds of experiments as part of MAS.664. All pipelines ran as live cloud API calls — not locally.</p>
-
-    <p style="margin-top:20px;margin-bottom:8px"><strong style="color:var(--gold)">HW7 — Initial Experiments</strong> &nbsp;<span style="font-size:12px;color:var(--faint)">12 agent calls · 3 experiments</span></p>
-    <table class="exp-table">
-      <thead><tr><th>Experiment</th><th>What we tested</th><th>Key finding</th></tr></thead>
-      <tbody>
-        <tr><td>Strategy consistency</td><td>Same scenario, 5 identical runs</td><td>Craving surfing dominated — action-level non-determinism visible</td></tr>
-        <tr><td>Memory depth</td><td>0, 3, 6 memory entries</td><td>Flat scores — agent compensates via in-context reasoning</td></tr>
-        <tr><td>Orchestrator coordination</td><td>4 distinct scenario types</td><td>Check-in timing varied 30–120 min; no overrides</td></tr>
-      </tbody>
-    </table>
-
-    <p style="margin-top:28px;margin-bottom:8px"><strong style="color:var(--gold)">HW8 — Scaled Experiments</strong> &nbsp;<span style="font-size:12px;color:var(--faint)">120 agent calls · 30 pipelines</span></p>
-    <table class="exp-table">
-      <thead><tr><th>Experiment</th><th>What we tested</th><th>Key finding</th></tr></thead>
-      <tbody>
-        <tr><td>Throughput under load</td><td>10 concurrent pipelines</td><td><span class="badge b-fail">5/10 failed</span> — API rate limiting is the production ceiling</td></tr>
-        <tr><td>Strategy diversity</td><td>15 scenarios, craving 1–10</td><td><span class="badge b-warn">monoculture</span> — craving surfing dominated all tiers</td></tr>
-        <tr><td>Input noise robustness</td><td>5 degraded input profiles</td><td><span class="badge b-ok">5/5 completed</span> — graceful degradation, no contradiction detection</td></tr>
-      </tbody>
-    </table>
-  </div>
-
   <!-- Limitations -->
   <div class="section fade-in" id="limitations">
     <div class="section-label">Known issues</div>
     <h2>Limitations</h2>
-    <p>We believe in being honest about what doesn't work yet. These are the known limitations as of HW8.</p>
+    <p>We believe in being honest about what doesn't work yet. These are the known limitations of the current version.</p>
 
     <div class="limit-list">
       <div class="limit-item">
@@ -457,7 +425,7 @@ vercel --prod</pre>
 </div>
 
 <footer>
-  <p>lily. &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app" target="_blank">Try the app</a> &nbsp;·&nbsp; <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="https://www.youtube.com/watch?v=5iWd3WntZH4" target="_blank">Demo video</a> &nbsp;·&nbsp; <a href="https://youtu.be/_G0T284eDLc" target="_blank">Experiments video</a></p>
+  <p>lily. &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app" target="_blank">Try the app</a> &nbsp;·&nbsp; <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a></p>
   <p style="margin-top:8px">MAS.664 · MIT Sloan / MIT Media Lab · Spring 2026 · Deni Hoxha & Leila Veerasamy</p>
 </footer>
 

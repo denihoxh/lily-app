@@ -12,8 +12,7 @@ Team: Deni Hoxha & Leila Veerasamy
 ## Live Demo
 
 **App:** https://lily-app-xi.vercel.app  
-**Demo video:** https://www.youtube.com/watch?v=5iWd3WntZH4  
-**Experiments video:** https://youtu.be/_G0T284eDLc
+
 
 ---
 
@@ -70,7 +69,6 @@ USER INPUT
 Each agent makes an independent cloud LLM call with structured JSON inputs and outputs. The Orchestrator closes the feedback loop by writing a memory update that the User State Agent reads on the next pipeline run.
 
 **Consumer app:** Claude claude-sonnet-4-20250514 via Anthropic API  
-**Experiment runner:** Llama 3.3-70B via Groq API
 
 ---
 
@@ -81,8 +79,6 @@ lily-app/
 ├── index.html              # Consumer app (mobile UI)
 ├── web.html                # Web app (full desktop layout + live pipeline panel)
 ├── docs.html               # Documentation landing page
-├── experiments.html        # HW7 experiment runner (12 agent calls)
-├── lily_hw8.html           # HW8 scaled experiment runner (120 agent calls)
 ├── api/
 │   └── pipeline.js         # Vercel serverless function — REST API endpoint
 ├── SOUL.md                 # OpenClaw agent configuration
@@ -102,7 +98,6 @@ lily-app/
 
 - Node.js (v18+)
 - An Anthropic API key (for the consumer app)
-- A Groq API key (for the experiment runners)
 
 ### Run locally
 
@@ -119,8 +114,6 @@ npx serve .
 ```
 
 Open `http://localhost:3000` for the consumer app.  
-Open `http://localhost:3000/experiments` for the HW7 experiment runner.  
-Open `http://localhost:3000/lily_hw8.html` for the HW8 scaled experiments.
 
 ### API Keys
 
@@ -131,45 +124,12 @@ The consumer app (`index.html`) calls the Anthropic API directly from the browse
 'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE',
 ```
 
-The experiment runners call Groq. Replace the key at the top of each file:
-
-```javascript
-// lily_hw8.html, line ~300
-const GROQ_KEY = 'YOUR_GROQ_API_KEY_HERE';
-```
-
 ### Deploy to Vercel
 
 ```bash
 npm install -g vercel
 vercel --prod
 ```
-
----
-
-## Experiments
-
-Lily has been tested across two homework experiments as part of MAS.664.
-
-### HW7 — Initial Agent Experiments (12 agent calls)
-
-Three experiments testing strategy consistency, memory depth, and orchestrator coordination:
-
-| Experiment | What we tested | Key finding |
-|---|---|---|
-| Strategy consistency | Same scenario, 5 identical runs | Craving surfing dominated all 5; action-level non-determinism visible |
-| Memory depth | 0, 3, 6 memory entries | Flat personalization scores — agent compensates via in-context reasoning |
-| Orchestrator coordination | 4 scenario types | Check-in timing varied (30–120 min); no overrides |
-
-### HW8 — Scaled Experiments (30 pipelines, 120 agent calls)
-
-Three experiments testing throughput, strategy diversity, and input robustness:
-
-| Experiment | What we tested | Key finding |
-|---|---|---|
-| Throughput under load | 10 concurrent pipelines | 5/10 failed — API rate limiting is the production ceiling |
-| Strategy diversity | 15 scenarios, craving 1–10 | Craving surfing dominated all tiers — monoculture is structural |
-| Input noise robustness | 5 degraded/contradictory profiles | Graceful degradation but no contradiction detection |
 
 ---
 
@@ -288,7 +248,6 @@ See [`AGENT_INTEGRATION.md`](./AGENT_INTEGRATION.md) for full examples with **La
 ## Built With
 
 - **Claude claude-sonnet-4-20250514** (Anthropic) — consumer app coaching
-- **Llama 3.3-70B** (Groq) — experiment pipeline
 - **Vercel** — deployment
 - **Vanilla JS + HTML/CSS** — no framework dependencies
 
