@@ -774,7 +774,7 @@ body {
       <div class="splash-tagline">Quit on your terms</div>
       <div class="splash-dot"></div>
       <button class="splash-btn" onclick="goOnboard()">Get Started</button>
-      <div class="splash-sub">Your personal quit coach — free to start</div>
+      <div class="splash-sub">A coach in your corner — not a substitute for professional care</div>
     </div>
   </div>
 
@@ -891,7 +891,7 @@ body {
           </button>
           <button class="ob-opt" onclick="selectOb(this,'freq','high')">
             <div class="ob-opt-title">A lot — feels constant</div>
-            <div class="ob-opt-sub">Hard to keep track</div>
+            <div class="ob-opt-sub">Hard to keep track — a doctor or counselor can help alongside Lily</div>
           </button>
         </div>
         <button class="ob-cta" id="ob-cta-1" disabled onclick="obStep(1)" style="margin-top:auto">Continue</button>
@@ -952,7 +952,7 @@ body {
         <div class="v-avatar">🌿<div class="v-online"></div></div>
         <div>
           <div class="v-name">Lily</div>
-          <div class="v-sub">Your quit coach · Always here</div>
+          <div class="v-sub">Your quit coach · Works best alongside professional support</div>
         </div>
       </div>
 
@@ -1080,6 +1080,9 @@ body {
         <button class="modal-opt" onclick="selLog(this,'stressed')"><div class="mo-icon">😤</div><div class="mo-text">Stressed / triggered</div><div class="mo-sub">High-risk moment</div></button>
       </div>
       <button class="modal-confirm" onclick="confirmLog()">Log it</button>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-m);font-weight:300">
+        Need more support? <span style="color:var(--gold);cursor:pointer;text-decoration:underline" onclick="closeModal();addMsg('user','I think I need to talk to a professional');chatHistory.push({role:'user',content:'I think I need to talk to a professional'});getReply('I think I need to talk to a professional')">Talk to Lily about professional help</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1147,7 +1150,8 @@ async function finishOnboard() {
 function welcomeMsg() {
   const gm = { reduce:'cut back gradually over time', optimize:'use intentionally — not reflexively', stabilize:'stabilize your habit and get back in control' };
   const tm = { stress:'stress and anxiety', social:'social situations', routine:'morning and meal routines', boredom:'boredom' };
-  return `Hey ${profile.name} 👋 I'm Lily — your quit coach.\n\nYour protocol is to ${gm[profile.goal]||'reduce your use'}. I'll be checking in during ${tm[profile.trigger]||'your high-risk moments'} and whenever the urge hits.\n\nHow are you feeling about starting today?`;
+  const heavyNote = profile.freq === 'high' ? '\n\nOne thing worth saying upfront: for heavy use, I work best as part of a broader plan. A doctor or addiction counselor alongside me will give you the best shot.' : '';
+  return `Hey ${profile.name} 👋 I'm Lily — your quit coach.\n\nYour protocol is to ${gm[profile.goal]||'reduce your use'}. I'll be checking in during ${tm[profile.trigger]||'your high-risk moments'} and whenever the urge hits.${heavyNote}\n\nHow are you feeling about starting today?`;
 }
 
 // ── Notifications data ──
@@ -1283,6 +1287,8 @@ async function voliMsg(text, instant) {
   chatHistory.push({role:'assistant',content:text});
 }
 
+// Chat handled via /api/chat server-side endpoint
+
 async function getReply(userMsg) {
   if(typing) return;
   typing=true; showTyping(); await sleep(500);
@@ -1290,15 +1296,19 @@ async function getReply(userMsg) {
     const gm={reduce:'Reduce (cut back gradually)',optimize:'Optimize (intentional use)',stabilize:'Stabilize (reset usage)'};
     const fm={low:'light (a few times a day)',mod:'moderate (throughout the day)',high:'heavy (very frequent)'};
     const tm={stress:'stress and anxiety',social:'social situations',routine:'morning/meal routines',boredom:'boredom'};
-    const sys=`You are Lily, a warm and intelligent quit coach for nicotine reduction. You feel like a supportive human coach who deeply understands addiction — not an app.
+    const sys=`You are Lily, a warm and intelligent quit coach for nicotine reduction. You feel like a supportive human coach who deeply understands addiction — not a clinical app, not a replacement for professional care.
 
 User: ${profile.name||'the user'} | Protocol: ${gm[profile.goal]||'Stabilize'} | Use frequency: ${fm[profile.freq]||'moderate'} | Trigger: ${tm[profile.trigger]||'stress'} | Streak: ${streak} days | Uses today: ${todayUses} | Resisted: ${resisted}
 
-Personality: warm, direct, occasionally dry wit — like a knowledgeable friend. Keep replies SHORT — 2-4 sentences, mobile chat. One follow-up question max. When struggling: offer ONE concrete alternative (walk, cold water, 10-min delay, deep breath, chew gum, text a friend). When succeeding: acknowledge specifically. Never clinical, never preachy. No hardware references. You are Lily, not an AI.`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:180,system:sys,messages:chatHistory.slice(-10)})});
+Your interventions are grounded in Cognitive Behavioral Therapy (CBT) techniques: delay tactics (urge surfing — wait 15 minutes), cognitive reframing (question the thought behind the craving), behavioral substitution (replace the action with something else), and motivational reinforcement (remind them of their stated goal and prior wins).
+
+Personality: warm, direct, occasionally dry wit — like a knowledgeable friend. Keep replies SHORT — 2-4 sentences, mobile chat. One follow-up question max. When struggling: offer ONE specific CBT-grounded strategy. When succeeding: acknowledge it specifically. Never preachy. No hardware references. You are Lily, not an AI.
+
+Important: If the user expresses severe distress, mentions other substances beyond nicotine, or seems to need more than coaching support, gently suggest they also speak with a doctor or addiction counselor. Lily works best as part of a broader support plan.`;
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,messages:chatHistory.slice(-10),max_tokens:180})});
     const d=await res.json();
-    if(d.error) throw new Error(d.error.message);
-    const reply=d.content[0].text;
+    if(d.error) throw new Error(d.error);
+    const reply=d.content;
     rmTyping(); addMsg('voli',reply); chatHistory.push({role:'assistant',content:reply});
     const low=userMsg.toLowerCase();
     if(low.includes('crav')||low.includes('urge')||low.includes('want')) showQR(['Walk it off','Drink water','I gave in','It passed']);

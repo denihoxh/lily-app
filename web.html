@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
     </div>
   </div>
   <div class="nav-right">
-    <div class="api-badge" id="api-badge" onclick="switchRpTab('api',document.getElementById('rp-api'))">API key not set</div>
+    <div class="api-badge connected" id="api-badge">● live</div>
     <button class="log-btn" onclick="openLog()">+ Log moment</button>
   </div>
 </div>
@@ -566,7 +566,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <a href="https://github.com/denihoxh/lily-app" target="_blank" style="padding:9px 18px;background:var(--card);border:1px solid var(--border2);color:var(--gold);border-radius:7px;font-size:12px;text-decoration:none">View on GitHub →</a>
-        <a href="https://youtu.be/_G0T284eDLc" target="_blank" style="padding:9px 18px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:7px;font-size:12px;text-decoration:none">Experiments video →</a>
       </div>
     </div>
   </div>
@@ -630,10 +629,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
       <!-- API section -->
       <div class="rp-section" id="rps-api">
-        <div class="api-section-title">Your API key</div>
-        <div class="api-info">Add your Anthropic key to use the live Claude pipeline. Your key stays in your browser only.</div>
-        <input class="api-input" id="api-key-input" type="password" placeholder="sk-ant-..." oninput="updateApiKey(this.value)">
-        <button class="api-btn" onclick="saveApiKey()">Connect key</button>
+        <div class="api-section-title">Pipeline status</div>
+        <div class="api-info">Lily runs on Llama 3.3-70B via Groq. The API key is managed server-side — no setup needed.</div>
+        <div style="background:rgba(74,174,138,0.1);border:1px solid rgba(74,174,138,0.3);border-radius:7px;padding:10px;font-size:12px;color:var(--green);margin-bottom:12px">● Live — powered by Groq / Llama 3.3-70B</div>
 
         <div class="api-section-title">Bring your own agents</div>
         <div class="api-info">Override any agent in the pipeline with your own system prompt. Your agent receives the same structured JSON input and must return the same output schema.</div>
@@ -678,7 +676,10 @@ let memory = [];
 let todayUses = 0, resisted = 0, streak = 4;
 let typing = false;
 let chosenLog = null;
-let apiKey = '';
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+// API calls handled server-side via /api/chat and /api/pipeline
+let apiKey = 'server'; // key lives in Vercel env, not browser
 let customAgents = { state: null, predict: null, intervene: null, orch: null };
 let lastPipelineOutput = null;
 
@@ -740,14 +741,8 @@ function switchRpTab(name, btn) {
 }
 
 // ── API Key ──
-function updateApiKey(val) { apiKey = val; }
-function saveApiKey() {
-  if(!apiKey) return;
-  const badge = document.getElementById('api-badge');
-  badge.textContent = 'API key connected';
-  badge.classList.add('connected');
-  addMsg('voli','API key connected ✓ Lily is now running on the live Claude pipeline. Your key is stored in your browser only and never sent anywhere except Anthropic.');
-}
+function updateApiKey(val) {}
+function saveApiKey() {}
 
 // ── Agent swaps ──
 function toggleAgentSwap(id) {
@@ -793,19 +788,15 @@ async function runAgenticPipeline(craving, stress, contexts) {
   switchRpTab('pipeline', document.getElementById('rp-pipeline'));
 
   const callLLM = async (system, user) => {
-    if(!apiKey) {
-      // Demo mode — return plausible mock data
-      await sleep(600 + Math.random()*800);
-      return null;
-    }
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+
+    const res = await fetch(GROQ_URL, {
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system,messages:[{role:'user',content:user}]})
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:GROQ_MODEL,max_tokens:600,messages:[{role:'system',content:system},{role:'user',content:user}],temperature:0.7})
     });
     const d = await res.json();
     if(d.error) throw new Error(d.error.message);
-    const txt = d.content[0].text;
+    const txt = d.choices[0].message.content;
     try { return JSON.parse(txt.replace(/```json|```/g,'').trim()); }
     catch(e) { const m=txt.match(/\{[\s\S]*\}/); return m?JSON.parse(m[0]):null; }
   };
@@ -980,24 +971,12 @@ Personality: warm, direct, occasionally dry wit. Keep replies SHORT — 2-4 sent
 
 If the user expresses severe distress or mentions other substances, gently suggest speaking with a doctor or addiction counselor. Lily works best as part of a broader support plan.`;
 
-    if(!apiKey) {
-      rmTyping();
-      const demoReplies = [
-        "I hear you. That sounds like a real craving moment. Try this: set a 15-minute timer and do literally anything else. The wave peaks in about 15 minutes, then it falls. You don't have to fight it — just outlast it.",
-        "That's actually great awareness — you caught it before it happened. That's the whole game. What triggered it?",
-        "Good. Resisting once makes the next one slightly easier. Your streak is real — don't underestimate that.",
-        "Stress cravings are the hardest because the urge and the relief feel chemically linked. They're not. Try the cognitive reframe: what's the actual thought underneath the craving right now?",
-        "I'm here. Tell me what's going on."
-      ];
-      addMsg('voli', demoReplies[Math.floor(Math.random()*demoReplies.length)]);
-      chatHistory.push({role:'assistant',content:'...'});
-      typing=false; return;
-    }
 
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,system:sys,messages:chatHistory.slice(-12)})});
+
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,messages:chatHistory.slice(-12),max_tokens:200})});
     const d=await res.json();
-    if(d.error)throw new Error(d.error.message);
-    const reply=d.content[0].text;
+    if(d.error)throw new Error(d.error);
+    const reply=d.content;
     rmTyping();addMsg('voli',reply);chatHistory.push({role:'assistant',content:reply});
     const low=userMsg.toLowerCase();
     if(low.includes('crav')||low.includes('urge')||low.includes('want'))showQR(['Walk it off','Drink water','I gave in','It passed']);

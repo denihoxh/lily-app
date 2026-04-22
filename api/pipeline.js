@@ -52,8 +52,7 @@
  * }
  */
 
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = 'claude-sonnet-4-20250514';
+// Model config — uses GROQ_API_KEY env var server-side, or api_key from request body
 
 // ── Default system prompts for each agent ──
 
@@ -128,28 +127,33 @@ memory_write: a single sentence log entry with timestamp, craving level, strateg
 
 // ── LLM call helper ──
 async function callAgent(apiKey, systemPrompt, userContent, agentName) {
-  const res = await fetch(ANTHROPIC_URL, {
+  const groqKey = apiKey || process.env.GROQ_API_KEY;
+  if (!groqKey) throw new Error('No API key available');
+
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
+      'Authorization': 'Bearer ' + groqKey
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: 'llama-3.3-70b-versatile',
       max_tokens: 600,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userContent }]
+      temperature: 0.7,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ]
     })
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(`${agentName} failed: ${err.error?.message || `HTTP ${res.status}`}`);
+    throw new Error(`${agentName} failed: ${err.error?.message || 'HTTP '+res.status}`);
   }
 
   const data = await res.json();
-  const text = data.content?.[0]?.text || '';
+  const text = data.choices?.[0]?.message?.content || '';
 
   // Parse JSON — strip any accidental markdown fences
   const clean = text.replace(/```json|```/g, '').trim();
@@ -196,10 +200,10 @@ export default async function handler(req, res) {
   const profile = body.profile || {};
   const customAgents = body.custom_agents || {};
 
-  // API key: header takes priority, then body
-  const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '') || body.api_key;
+  // API key: env var (server-side, preferred) or request body/header as fallback
+  const apiKey = process.env.GROQ_API_KEY || req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '') || body.api_key;
   if (!apiKey) {
-    return res.status(401).json({ ok: false, error: 'API key required. Pass as x-api-key header, Authorization: Bearer <key>, or api_key in body.' });
+    return res.status(401).json({ ok: false, error: 'Server not configured. Set GROQ_API_KEY in Vercel environment variables.' });
   }
 
   // ── Input validation layer (addressing Jana's feedback) ──
