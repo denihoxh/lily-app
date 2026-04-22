@@ -237,11 +237,10 @@ footer a { color: var(--gold-d); text-decoration: none; }
   <div class="nav-logo">lily.</div>
   <div class="nav-links">
     <a href="#architecture">Architecture</a>
-    <a href="#setup">Setup</a>
     <a href="#limitations">Limitations</a>
     <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a>
   </div>
-  <a href="https://lily-app-xi.vercel.app" class="nav-cta" target="_blank">Try Lily →</a>
+  <a href="https://lily-app-xi.vercel.app" class="nav-cta" target="_blank">Open Web App →</a>
 </nav>
 
 <section class="hero">
@@ -250,7 +249,8 @@ footer a { color: var(--gold-d); text-decoration: none; }
   <div class="hero-tagline">Behavior change, in the moment.</div>
   <p class="hero-desc">An agentic AI pipeline for nicotine reduction. Four specialized agents observe your behavioral state, predict relapse risk, and deliver a personalized CBT-grounded intervention — every time you feel a craving.</p>
   <div class="hero-btns">
-    <a href="https://lily-app-xi.vercel.app" class="btn-primary" target="_blank">Open App</a>
+    <a href="https://lily-app-xi.vercel.app" class="btn-primary" target="_blank">Open Web App →</a>
+    <a href="https://lily-app-xi.vercel.app/app.html" class="btn-secondary" target="_blank">Open Mobile App →</a>
     <a href="https://github.com/denihoxh/lily-app" class="btn-secondary" target="_blank">View on GitHub</a>
   </div>
 </section>
@@ -317,32 +317,6 @@ footer a { color: var(--gold-d); text-decoration: none; }
                                                               feeds back to User State Agent on next call</pre>
 
     <p style="margin-top:16px"><strong style="color:var(--text)">Powered by:</strong> Claude claude-sonnet-4-20250514 via Anthropic API</p>
-  </div>
-
-  <!-- Setup -->
-  <div class="section fade-in" id="setup">
-    <div class="section-label">Getting started</div>
-    <h2>Setup & Installation</h2>
-    <p>Lily is a single-file HTML app with no build step. Clone the repo, add your API keys, and serve locally or deploy to Vercel.</p>
-
-    <p><strong style="color:var(--text)">Prerequisites:</strong> Node.js v18+ and an Anthropic API key</p>
-
-    <pre>git clone https://github.com/denihoxh/lily-app.git
-cd lily-app
-npm install
-npx serve .</pre>
-
-    <p>Then open:</p>
-    <pre>http://localhost:3000            # Consumer app
-</pre>
-
-    <p><strong style="color:var(--text)">Add your API keys</strong> — in <code>index.html</code> find the <code>getReply</code> function and replace the key:</p>
-    <pre>'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE'</pre>
-
-
-    <p><strong style="color:var(--text)">Deploy to Vercel:</strong></p>
-    <pre>npm install -g vercel
-vercel --prod</pre>
   </div>
 
   <!-- Limitations -->
@@ -425,7 +399,7 @@ vercel --prod</pre>
 </div>
 
 <footer>
-  <p>lily. &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app" target="_blank">Try the app</a> &nbsp;·&nbsp; <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a></p>
+  <p>lily. &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app" target="_blank">Web App</a> &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app/app.html" target="_blank">Mobile App</a> &nbsp;·&nbsp; <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a></p>
   <p style="margin-top:8px">MAS.664 · MIT Sloan / MIT Media Lab · Spring 2026 · Deni Hoxha & Leila Veerasamy</p>
 </footer>
 

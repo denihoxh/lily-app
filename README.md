@@ -11,7 +11,9 @@ Team: Deni Hoxha & Leila Veerasamy
 
 ## Live Demo
 
-**App:** https://lily-app-xi.vercel.app  
+**Web App:** https://lily-app-xi.vercel.app
+**Mobile App:** https://lily-app-xi.vercel.app/app.html
+**Docs:** https://lily-app-xi.vercel.app/docs.html  
 
 
 ---
@@ -76,8 +78,8 @@ Each agent makes an independent cloud LLM call with structured JSON inputs and o
 
 ```
 lily-app/
-├── index.html              # Consumer app (mobile UI)
-├── web.html                # Web app (full desktop layout + live pipeline panel)
+├── index.html              # Web app (main URL — full desktop layout + live pipeline)
+├── app.html                # Mobile app (streamlined coaching interface)
 ├── docs.html               # Documentation landing page
 ├── api/
 │   └── pipeline.js         # Vercel serverless function — REST API endpoint
