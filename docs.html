@@ -237,6 +237,7 @@ footer a { color: var(--gold-d); text-decoration: none; }
   <div class="nav-logo">lily.</div>
   <div class="nav-links">
     <a href="#architecture">Architecture</a>
+    <a href="#openclaw">OpenClaw</a>
     <a href="#limitations">Limitations</a>
     <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a>
   </div>
@@ -360,6 +361,57 @@ footer a { color: var(--gold-d); text-decoration: none; }
         <div class="road-item"><div class="road-box"></div><div class="road-text">Integration with Apple Health, Oura, Whoop</div></div>
         <div class="road-item"><div class="road-box"></div><div class="road-text">Expansion to alcohol and other behavioral addictions</div></div>
       </div>
+    </div>
+  </div>
+
+  <!-- OpenClaw -->
+  <div class="section fade-in" id="openclaw">
+    <div class="section-label">Agent integration</div>
+    <h2>Connect your OpenClaw agent</h2>
+    <p>Lily is fully compatible with <a href="https://github.com/openclaw/openclaw" target="_blank" style="color:var(--green)">OpenClaw</a> — the open-source personal AI assistant framework. Deploy Lily as a coaching agent on any channel you already use: WhatsApp, Telegram, iMessage, Slack, Discord, or SMS.</p>
+
+    <p style="margin-top:12px"><strong style="color:var(--text)">Step 1 — Install OpenClaw</strong></p>
+    <pre>npm install -g openclaw@latest
+openclaw onboard</pre>
+
+    <p><strong style="color:var(--text)">Step 2 — Add Lily as an agent</strong></p>
+    <pre>openclaw agents add --from https://raw.githubusercontent.com/denihoxh/lily-app/main/SOUL.md</pre>
+
+    <p><strong style="color:var(--text)">Step 3 — Install the Lily pipeline skill</strong></p>
+    <pre>openclaw skills add https://raw.githubusercontent.com/denihoxh/lily-app/main/SKILL.md</pre>
+
+    <p><strong style="color:var(--text)">Step 4 — Start the gateway</strong></p>
+    <pre>openclaw gateway:watch</pre>
+
+    <p>Once running, Lily will respond to craving events on any connected channel and maintain behavioral memory across sessions.</p>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px">
+      <div style="font-size:11px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Key files</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:10px">
+          <div style="font-size:12px;color:var(--gold);font-weight:500;margin-bottom:4px">SOUL.md</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:300">Agent identity, rules, personality, channel config, and memory schema</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:10px">
+          <div style="font-size:12px;color:var(--gold);font-weight:500;margin-bottom:4px">SKILL.md</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:300">Full skill definition with input/output schema and integration examples</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px">
+      <div style="font-size:11px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Bring your own agent — pipeline API</div>
+      <p style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:10px">Any agent framework (LangChain, CrewAI, AutoGen) can call Lily's pipeline directly as a REST API.</p>
+      <pre style="margin:0">POST https://lily-app-xi.vercel.app/api/pipeline
+Content-Type: application/json
+
+{
+  "craving": 8,
+  "stress": 7,
+  "contexts": ["After coffee"],
+  "memory": ["Prior event logs..."]
+}</pre>
+      <p style="margin-top:10px;font-size:11px;color:var(--faint)">See <a href="https://github.com/denihoxh/lily-app/blob/main/AGENT_INTEGRATION.md" target="_blank" style="color:var(--green)">AGENT_INTEGRATION.md</a> for full examples with LangChain, CrewAI, AutoGen, and raw Python.</p>
     </div>
   </div>
 

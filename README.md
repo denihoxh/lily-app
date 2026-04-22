@@ -70,7 +70,7 @@ USER INPUT
 
 Each agent makes an independent cloud LLM call with structured JSON inputs and outputs. The Orchestrator closes the feedback loop by writing a memory update that the User State Agent reads on the next pipeline run.
 
-**Consumer app:** Claude claude-sonnet-4-20250514 via Anthropic API  
+**Powered by:** Llama 3.3-70B via Groq (server-side — no API key needed to use the app)  
 
 ---
 
@@ -99,7 +99,6 @@ lily-app/
 ### Prerequisites
 
 - Node.js (v18+)
-- An Anthropic API key (for the consumer app)
 
 ### Run locally
 
@@ -211,7 +210,6 @@ Lily's 4-agent pipeline is available as a live REST API. Any agent framework can
 
 ```bash
 POST https://lily-app-xi.vercel.app/api/pipeline
-x-api-key: YOUR_ANTHROPIC_KEY
 Content-Type: application/json
 
 {
@@ -249,7 +247,7 @@ See [`AGENT_INTEGRATION.md`](./AGENT_INTEGRATION.md) for full examples with **La
 
 ## Built With
 
-- **Claude claude-sonnet-4-20250514** (Anthropic) — consumer app coaching
+- **Llama 3.3-70B** (Groq) — AI pipeline (server-side)
 - **Vercel** — deployment
 - **Vanilla JS + HTML/CSS** — no framework dependencies
 
