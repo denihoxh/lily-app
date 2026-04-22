@@ -116,14 +116,9 @@ npx serve .
 
 Open `http://localhost:3000` for the consumer app.  
 
-### API Keys
+### No API key needed
 
-The consumer app (`index.html`) calls the Anthropic API directly from the browser. To use it with your own key, open `index.html` and replace the API key in the `getReply` function:
-
-```javascript
-// Find this line in index.html (~line 1290)
-'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE',
-```
+Lily's AI pipeline runs server-side — just open the app and start chatting.
 
 ### Deploy to Vercel
 
