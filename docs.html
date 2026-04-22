@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lily — Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1E14;
+  --bg-card: #111f17;
+  --bg-card2: #152219;
+  --gold: #D4C49A;
+  --gold-d: #9A8A62;
+  --green: #4AAE8A;
+  --green-d: #2A7A56;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(212,196,154,0.18);
+  --text: #FFFFFF;
+  --muted: #A8BDB4;
+  --faint: #5A7A6A;
+  --red: #E87070;
+  --amber: #E8B86D;
+  --serif: 'Fraunces', Georgia, serif;
+  --mono: 'DM Mono', 'Courier New', monospace;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,30,20,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.nav-logo { font-family: var(--serif); font-size: 22px; color: var(--gold); font-style: italic; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 300; transition: color 0.2s; }
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  padding: 7px 16px; background: var(--gold); color: var(--bg);
+  border-radius: 6px; font-size: 13px; font-weight: 500;
+  text-decoration: none; transition: opacity 0.15s;
+}
+.nav-cta:hover { opacity: 0.85; color: var(--bg); }
+
+/* ── HERO ── */
+.hero {
+  padding: 96px 32px 80px;
+  max-width: 860px; margin: 0 auto;
+  text-align: center;
+}
+.hero-eyebrow {
+  display: inline-block;
+  padding: 4px 12px; border: 1px solid var(--border2);
+  border-radius: 20px; font-size: 11px; color: var(--gold-d);
+  letter-spacing: 0.1em; text-transform: uppercase; font-weight: 400;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(52px, 8vw, 88px);
+  color: var(--gold); font-style: italic; font-weight: 300;
+  line-height: 1; margin-bottom: 16px;
+}
+.hero-tagline {
+  font-family: var(--serif); font-size: 20px; color: var(--green);
+  font-style: italic; font-weight: 300; margin-bottom: 24px;
+}
+.hero-desc {
+  font-size: 16px; color: var(--muted); font-weight: 300;
+  max-width: 560px; margin: 0 auto 36px; line-height: 1.8;
+}
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  padding: 12px 24px; background: var(--gold); color: var(--bg);
+  border-radius: 8px; font-size: 14px; font-weight: 500;
+  text-decoration: none; transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary {
+  padding: 12px 24px; border: 1px solid var(--border2); color: var(--gold);
+  border-radius: 8px; font-size: 14px; font-weight: 300;
+  text-decoration: none; transition: all 0.15s;
+}
+.btn-secondary:hover { background: rgba(212,196,154,0.06); }
+
+/* ── STATS BAR ── */
+.stats {
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  max-width: 860px; margin: 0 auto;
+}
+.stat { padding: 28px 24px; text-align: center; border-right: 1px solid var(--border); }
+.stat:last-child { border-right: none; }
+.stat-v { font-family: var(--serif); font-size: 36px; color: var(--gold); font-style: italic; line-height: 1; }
+.stat-l { font-size: 11px; color: var(--faint); margin-top: 6px; font-weight: 300; letter-spacing: 0.05em; }
+
+/* ── CONTENT LAYOUT ── */
+.content {
+  max-width: 860px; margin: 0 auto;
+  padding: 0 32px 96px;
+}
+
+.section { margin-top: 72px; }
+.section-label {
+  font-size: 10px; color: var(--faint); font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;
+}
+.section h2 {
+  font-family: var(--serif); font-size: 32px; color: var(--gold);
+  font-style: italic; font-weight: 300; margin-bottom: 20px;
+}
+.section p { color: var(--muted); font-weight: 300; margin-bottom: 14px; line-height: 1.8; }
+
+/* ── AGENT CARDS ── */
+.agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.agent-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+  transition: border-color 0.2s;
+}
+.agent-card:hover { border-color: rgba(212,196,154,0.25); }
+.agent-num { font-family: var(--serif); font-size: 13px; color: var(--green); font-style: italic; margin-bottom: 6px; }
+.agent-name { font-size: 14px; color: var(--text); font-weight: 500; margin-bottom: 6px; }
+.agent-desc { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; }
+.agent-io { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.io-chip {
+  padding: 2px 8px; border-radius: 3px; font-size: 10px; font-family: var(--mono);
+  background: rgba(255,255,255,0.04); color: var(--faint); border: 1px solid var(--border);
+}
+
+/* ── CODE BLOCKS ── */
+pre {
+  background: #080f0a; border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 22px; margin: 16px 0;
+  overflow-x: auto; font-family: var(--mono); font-size: 12.5px;
+  color: var(--muted); line-height: 1.7;
+}
+code { font-family: var(--mono); font-size: 12.5px; color: var(--green); }
+p code {
+  background: rgba(74,174,138,0.08); padding: 2px 6px;
+  border-radius: 3px; color: var(--green); border: 1px solid rgba(74,174,138,0.15);
+}
+
+/* ── EXPERIMENTS TABLE ── */
+.exp-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+.exp-table th {
+  text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint);
+  border-bottom: 1px solid var(--border);
+}
+.exp-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+.exp-table tr:last-child td { border-bottom: none; }
+.exp-table td:first-child { color: var(--text); font-weight: 400; }
+.badge {
+  display: inline-flex; padding: 2px 7px; border-radius: 3px;
+  font-size: 10px; font-family: var(--mono); font-weight: 400;
+}
+.b-warn { background: rgba(232,184,109,0.12); color: var(--amber); }
+.b-ok { background: rgba(74,174,138,0.12); color: var(--green); }
+.b-fail { background: rgba(232,112,112,0.12); color: var(--red); }
+
+/* ── LIMITATIONS ── */
+.limit-list { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.limit-item {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-left: 2px solid var(--amber); border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+}
+.limit-title { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+.limit-desc { font-size: 12px; color: var(--muted); font-weight: 300; }
+
+/* ── ROADMAP ── */
+.roadmap { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.road-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.road-item:last-child { border-bottom: none; }
+.road-box { width: 16px; height: 16px; border: 1px solid var(--border2); border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
+.road-text { font-size: 13px; color: var(--muted); font-weight: 300; }
+
+/* ── CLINICAL NOTE ── */
+.clinical-box {
+  background: var(--bg-card2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 20px 24px; margin-top: 20px;
+}
+.clinical-title { font-size: 11px; color: var(--gold); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.clinical-text { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.8; }
+
+/* ── TEAM ── */
+.team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.team-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.team-name { font-family: var(--serif); font-size: 18px; color: var(--gold); font-style: italic; margin-bottom: 6px; }
+.team-role { font-size: 12px; color: var(--green); margin-bottom: 8px; font-weight: 300; }
+.team-bio { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); padding: 32px;
+  text-align: center; color: var(--faint); font-size: 12px; font-weight: 300;
+}
+footer a { color: var(--gold-d); text-decoration: none; }
+
+/* ── ANIMATIONS ── */
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 600px) {
+  nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  .hero { padding: 56px 20px 48px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .agent-grid, .team-grid { grid-template-columns: 1fr; }
+  .content { padding: 0 20px 64px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">lily.</div>
+  <div class="nav-links">
+    <a href="#architecture">Architecture</a>
+    <a href="#setup">Setup</a>
+    <a href="#experiments">Experiments</a>
+    <a href="#limitations">Limitations</a>
+    <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a>
+  </div>
+  <a href="https://lily-app-xi.vercel.app" class="nav-cta" target="_blank">Try Lily →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">MAS.664 · AI for Impact · MIT · Spring 2026</div>
+  <h1>lily.</h1>
+  <div class="hero-tagline">Behavior change, in the moment.</div>
+  <p class="hero-desc">An agentic AI pipeline for nicotine reduction. Four specialized agents observe your behavioral state, predict relapse risk, and deliver a personalized CBT-grounded intervention — every time you feel a craving.</p>
+  <div class="hero-btns">
+    <a href="https://lily-app-xi.vercel.app" class="btn-primary" target="_blank">Open App</a>
+    <a href="https://github.com/denihoxh/lily-app" class="btn-secondary" target="_blank">View on GitHub</a>
+    <a href="https://www.youtube.com/watch?v=5iWd3WntZH4" class="btn-secondary" target="_blank">Watch Demo</a>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-v">4</div><div class="stat-l">Agents</div></div>
+  <div class="stat"><div class="stat-v">120+</div><div class="stat-l">API calls tested</div></div>
+  <div class="stat"><div class="stat-v">30</div><div class="stat-l">Pipelines run</div></div>
+  <div class="stat"><div class="stat-v">CBT</div><div class="stat-l">Grounded strategies</div></div>
+</div>
+
+<div class="content">
+
+  <!-- Architecture -->
+  <div class="section fade-in" id="architecture">
+    <div class="section-label">How it works</div>
+    <h2>Agent Pipeline Architecture</h2>
+    <p>When you log a craving, Lily fires a 4-agent pipeline. Each agent makes an independent cloud LLM call with structured JSON inputs and outputs, passing state forward. The Orchestrator closes the feedback loop by writing a memory update that improves future interventions.</p>
+
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="agent-num">01</div>
+        <div class="agent-name">User State Agent</div>
+        <div class="agent-desc">Synthesizes your craving event, stress level, context, and memory history into a structured behavioral snapshot.</div>
+        <div class="agent-io">
+          <span class="io-chip">craving event</span>
+          <span class="io-chip">memory history</span>
+          <span class="io-chip">→ state JSON</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">02</div>
+        <div class="agent-name">Prediction Agent</div>
+        <div class="agent-desc">Estimates relapse probability, craving trajectory, and the window to act based on your behavioral state.</div>
+        <div class="agent-io">
+          <span class="io-chip">state JSON</span>
+          <span class="io-chip">→ risk % + trajectory</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">03</div>
+        <div class="agent-name">Intervention Agent</div>
+        <div class="agent-desc">Selects the most appropriate CBT strategy (urge surfing, cognitive reframing, delay tactic, behavioral substitution) and generates a personalized message.</div>
+        <div class="agent-io">
+          <span class="io-chip">state + prediction</span>
+          <span class="io-chip">→ strategy + message</span>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">04</div>
+        <div class="agent-name">Orchestrator Agent</div>
+        <div class="agent-desc">Makes the final decision, sets a proactive check-in window, and writes a memory update that closes the feedback loop.</div>
+        <div class="agent-io">
+          <span class="io-chip">all outputs</span>
+          <span class="io-chip">→ decision + memory write</span>
+        </div>
+      </div>
+    </div>
+
+    <pre>USER INPUT → User State Agent → Prediction Agent → Intervention Agent → Orchestrator Agent → ACTION OUTPUT
+                                                                                    ↓
+                                                                           memory write
+                                                                                    ↓
+                                                              feeds back to User State Agent on next call</pre>
+
+    <p style="margin-top:16px"><strong style="color:var(--text)">Consumer app:</strong> Claude claude-sonnet-4-20250514 (Anthropic API) &nbsp;·&nbsp; <strong style="color:var(--text)">Experiment runner:</strong> Llama 3.3-70B (Groq)</p>
+  </div>
+
+  <!-- Setup -->
+  <div class="section fade-in" id="setup">
+    <div class="section-label">Getting started</div>
+    <h2>Setup & Installation</h2>
+    <p>Lily is a single-file HTML app with no build step. Clone the repo, add your API keys, and serve locally or deploy to Vercel.</p>
+
+    <p><strong style="color:var(--text)">Prerequisites:</strong> Node.js v18+, an Anthropic API key (consumer app), a Groq API key (experiment runners)</p>
+
+    <pre>git clone https://github.com/denihoxh/lily-app.git
+cd lily-app
+npm install
+npx serve .</pre>
+
+    <p>Then open:</p>
+    <pre>http://localhost:3000            # Consumer app
+http://localhost:3000/experiments  # HW7 experiment runner
+http://localhost:3000/lily_hw8.html # HW8 scaled experiments</pre>
+
+    <p><strong style="color:var(--text)">Add your API keys</strong> — in <code>index.html</code> find the <code>getReply</code> function and replace the key:</p>
+    <pre>'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE'</pre>
+
+    <p>For the experiment runners, replace at the top of each file:</p>
+    <pre>const GROQ_KEY = 'YOUR_GROQ_API_KEY_HERE';</pre>
+
+    <p><strong style="color:var(--text)">Deploy to Vercel:</strong></p>
+    <pre>npm install -g vercel
+vercel --prod</pre>
+  </div>
+
+  <!-- Experiments -->
+  <div class="section fade-in" id="experiments">
+    <div class="section-label">What we tested</div>
+    <h2>Experiments</h2>
+    <p>Lily has been stress-tested across two rounds of experiments as part of MAS.664. All pipelines ran as live cloud API calls — not locally.</p>
+
+    <p style="margin-top:20px;margin-bottom:8px"><strong style="color:var(--gold)">HW7 — Initial Experiments</strong> &nbsp;<span style="font-size:12px;color:var(--faint)">12 agent calls · 3 experiments</span></p>
+    <table class="exp-table">
+      <thead><tr><th>Experiment</th><th>What we tested</th><th>Key finding</th></tr></thead>
+      <tbody>
+        <tr><td>Strategy consistency</td><td>Same scenario, 5 identical runs</td><td>Craving surfing dominated — action-level non-determinism visible</td></tr>
+        <tr><td>Memory depth</td><td>0, 3, 6 memory entries</td><td>Flat scores — agent compensates via in-context reasoning</td></tr>
+        <tr><td>Orchestrator coordination</td><td>4 distinct scenario types</td><td>Check-in timing varied 30–120 min; no overrides</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:28px;margin-bottom:8px"><strong style="color:var(--gold)">HW8 — Scaled Experiments</strong> &nbsp;<span style="font-size:12px;color:var(--faint)">120 agent calls · 30 pipelines</span></p>
+    <table class="exp-table">
+      <thead><tr><th>Experiment</th><th>What we tested</th><th>Key finding</th></tr></thead>
+      <tbody>
+        <tr><td>Throughput under load</td><td>10 concurrent pipelines</td><td><span class="badge b-fail">5/10 failed</span> — API rate limiting is the production ceiling</td></tr>
+        <tr><td>Strategy diversity</td><td>15 scenarios, craving 1–10</td><td><span class="badge b-warn">monoculture</span> — craving surfing dominated all tiers</td></tr>
+        <tr><td>Input noise robustness</td><td>5 degraded input profiles</td><td><span class="badge b-ok">5/5 completed</span> — graceful degradation, no contradiction detection</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Limitations -->
+  <div class="section fade-in" id="limitations">
+    <div class="section-label">Known issues</div>
+    <h2>Limitations</h2>
+    <p>We believe in being honest about what doesn't work yet. These are the known limitations as of HW8.</p>
+
+    <div class="limit-list">
+      <div class="limit-item">
+        <div class="limit-title">Strategy monoculture</div>
+        <div class="limit-desc">The Intervention Agent defaults heavily to craving surfing across all risk levels. A diversity mechanism tied to prior strategy effectiveness is needed.</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-title">Prediction Agent over-calibrates high</div>
+        <div class="limit-desc">Risk scores cluster at 60–80% even for craving 1/10. The model doesn't differentiate meaningfully at the low end of the scale.</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-title">No contradiction detection</div>
+        <div class="limit-desc">The User State Agent averages contradictory inputs rather than flagging them. An input validation layer is the next architectural priority.</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-title">Rate limiting at scale</div>
+        <div class="limit-desc">10+ concurrent pipelines hit the token-per-minute ceiling. Production deployment needs request queuing or a higher API tier.</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-title">Pipeline latency</div>
+        <div class="limit-desc">4 sequential agent calls take ~12–15 seconds. Parallelizing User State + Prediction agents is the highest-leverage optimization.</div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-top:40px">
+      <div class="section-label">What's next</div>
+      <h2>Roadmap</h2>
+      <div class="roadmap">
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Input validation layer before User State Agent</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Strategy diversity mechanism using prior effectiveness data</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Prediction Agent recalibration at low-risk thresholds</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Parallelized User State + Prediction agent calls</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Clinical outcome validation — A/B test vs. control group</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Integration with Apple Health, Oura, Whoop</div></div>
+        <div class="road-item"><div class="road-box"></div><div class="road-text">Expansion to alcohol and other behavioral addictions</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinical -->
+  <div class="section fade-in">
+    <div class="section-label">Important</div>
+    <h2>Clinical Framing</h2>
+    <div class="clinical-box">
+      <div class="clinical-title">Lily is a coaching tool, not a medical device</div>
+      <div class="clinical-text">
+        Lily is not a substitute for professional care. It is designed as an AI co-assistant that works best alongside clinical support — not as a standalone treatment.<br><br>
+        Interventions are grounded in Cognitive Behavioral Therapy (CBT) techniques. Heavy users are flagged at onboarding and encouraged to supplement Lily with professional support. The system escalates to professional support suggestions when users express severe distress.<br><br>
+        Clinical framing informed by <strong style="color:var(--text)">Jana Krystofova Mike, MD</strong> — Pediatric Critical Care, UCSF; published researcher in agentic AI for clinical intervention.
+      </div>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="section fade-in">
+    <div class="section-label">Who built this</div>
+    <h2>Team</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-name">Deni Hoxha</div>
+        <div class="team-role">MBA Candidate · MIT Sloan '27</div>
+        <div class="team-bio">Product manager with experience launching and scaling digital products. Ex-Morgan Stanley (Zelle platform). Harvard BA/MA '21.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-name">Leila Veerasamy</div>
+        <div class="team-role">MBA Candidate · MIT Sloan '27</div>
+        <div class="team-bio">Background in CPG manufacturing, sustainability, and international development. Ex-founder of DTC startup focused on user experience design. Brown University.</div>
+      </div>
+    </div>
+    <p style="margin-top:16px;font-size:13px">MAS.664 AI for Impact · MIT Media Lab & MIT Sloan · Spring 2026</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>lily. &nbsp;·&nbsp; <a href="https://lily-app-xi.vercel.app" target="_blank">Try the app</a> &nbsp;·&nbsp; <a href="https://github.com/denihoxh/lily-app" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="https://www.youtube.com/watch?v=5iWd3WntZH4" target="_blank">Demo video</a> &nbsp;·&nbsp; <a href="https://youtu.be/_G0T284eDLc" target="_blank">Experiments video</a></p>
+  <p style="margin-top:8px">MAS.664 · MIT Sloan / MIT Media Lab · Spring 2026 · Deni Hoxha & Leila Veerasamy</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

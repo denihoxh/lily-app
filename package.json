@@ -1,11 +1,15 @@
 {
   "name": "lily-app",
   "version": "1.0.0",
-  "description": "Lily — your quit coach",
+  "description": "Lily — agentic AI coach for nicotine reduction",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "npx serve ."
   },
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }
