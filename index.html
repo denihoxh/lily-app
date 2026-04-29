@@ -49,6 +49,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .api-badge.connected{border-color:rgba(74,174,138,0.4);color:var(--green);}
 .api-badge:hover{border-color:var(--border2);color:var(--gold);}
 
+/* ── FIX 4: Return to dashboard button in nav ── */
+.return-btn{
+  padding:4px 12px;border-radius:6px;font-size:11px;color:var(--muted);
+  cursor:pointer;border:1px solid var(--border);background:transparent;
+  font-family:var(--sans);transition:all 0.15s;display:none;
+}
+.return-btn:hover{color:var(--gold);border-color:var(--border2);}
+.return-btn.visible{display:block;}
+
 /* ── MAIN LAYOUT ── */
 .main{display:flex;flex:1;overflow:hidden;}
 
@@ -273,6 +282,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 }
 .modal-cta:hover{opacity:0.88;}
 .modal-cta:disabled{opacity:0.35;cursor:not-allowed;}
+
+/* FIX 4: Return to dashboard link in onboarding */
+.modal-return{
+  width:100%;padding:10px;background:transparent;color:var(--faint);border:1px solid var(--border);
+  border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--sans);
+  transition:all 0.15s;margin-top:10px;
+}
+.modal-return:hover{color:var(--gold);border-color:var(--border2);}
+
 .clinical-note{
   background:var(--card2);border:1px solid var(--border);border-radius:8px;
   padding:10px 12px;margin-bottom:16px;font-size:11px;color:var(--muted);
@@ -283,15 +301,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .ob-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background 0.2s;}
 .ob-dot.on{background:var(--gold);}
 
-/* ── LOG MODAL ── */
+/* ── FIX 3: LOG MODAL — centered, not flush to bottom ── */
 .log-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);
-  z-index:200;display:flex;align-items:flex-end;justify-content:center;
+  z-index:200;display:flex;
+  align-items:center;          /* FIX: was flex-end, now centered */
+  justify-content:center;
 }
 .log-overlay.hidden{display:none;}
 .log-box{
-  background:var(--card);border:1px solid var(--border2);border-radius:16px 16px 0 0;
+  background:var(--card);border:1px solid var(--border2);border-radius:16px; /* FIX: full radius, not just top */
   width:100%;max-width:480px;padding:24px;
+  margin:16px;                 /* FIX: breathing room on all sides */
 }
 .log-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;}
 .log-sub{font-size:11px;color:var(--faint);margin-bottom:16px;font-weight:300;}
@@ -313,6 +334,59 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .log-confirm:hover{opacity:0.88;}
 .log-pro-note{text-align:center;font-size:11px;color:var(--faint);cursor:pointer;}
 .log-pro-note span{color:var(--gold);text-decoration:underline;}
+
+/* ── FIX 1: UNDO TOAST ── */
+.undo-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--card2);border:1px solid var(--border2);border-radius:12px;
+  padding:12px 20px;display:flex;align-items:center;gap:16px;
+  font-size:13px;color:var(--text);z-index:300;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  transition:opacity 0.3s, transform 0.3s;
+  opacity:0;pointer-events:none;
+}
+.undo-toast.visible{opacity:1;pointer-events:auto;}
+.undo-toast-msg{font-weight:300;color:var(--muted);}
+.undo-toast-bar{
+  height:2px;background:var(--border);border-radius:1px;
+  margin-top:8px;overflow:hidden;position:relative;
+}
+.undo-toast-progress{
+  height:100%;background:var(--gold);border-radius:1px;
+  width:100%;transition:width linear;
+}
+.undo-btn{
+  padding:5px 12px;border-radius:6px;border:1px solid var(--border2);
+  background:transparent;color:var(--gold);font-size:12px;cursor:pointer;
+  font-family:var(--sans);transition:all 0.15s;white-space:nowrap;
+}
+.undo-btn:hover{background:rgba(212,196,154,0.1);}
+
+/* ── FIX 1: UNDO CONFIRM MODAL ── */
+.undo-confirm-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+  z-index:400;display:flex;align-items:center;justify-content:center;
+}
+.undo-confirm-overlay.hidden{display:none;}
+.undo-confirm-box{
+  background:var(--card);border:1px solid var(--border2);border-radius:14px;
+  width:320px;max-width:90vw;padding:24px;text-align:center;
+}
+.undo-confirm-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;}
+.undo-confirm-sub{font-size:12px;color:var(--muted);font-weight:300;margin-bottom:20px;line-height:1.6;}
+.undo-confirm-btns{display:flex;gap:8px;}
+.undo-confirm-yes{
+  flex:1;padding:10px;background:var(--red);border:none;border-radius:8px;
+  color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);
+  transition:opacity 0.15s;
+}
+.undo-confirm-yes:hover{opacity:0.85;}
+.undo-confirm-no{
+  flex:1;padding:10px;background:var(--card2);border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);font-size:13px;cursor:pointer;
+  font-family:var(--sans);transition:all 0.15s;
+}
+.undo-confirm-no:hover{border-color:var(--border2);color:var(--text);}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;}
@@ -345,6 +419,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
       <input class="ms-input" id="ob-name" placeholder="Your first name" oninput="document.getElementById('ms0-cta').disabled=this.value.trim().length===0">
       <div class="clinical-note"><strong>A note before we start:</strong> Lily uses CBT-based techniques and agentic AI to support your reduction goals. It works best alongside — not instead of — professional support for heavy use.</div>
       <button class="modal-cta" id="ms0-cta" disabled onclick="obStep(0,1)">Continue →</button>
+      <!-- FIX 4: Return to dashboard for existing users -->
+      <button class="modal-return" id="return-dash-btn" style="display:none" onclick="returnToDashboard()">↩ Return to my dashboard</button>
     </div>
 
     <!-- Step 1: Goal -->
@@ -430,6 +506,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   </div>
 </div>
 
+<!-- FIX 1: UNDO TOAST -->
+<div class="undo-toast" id="undo-toast">
+  <div style="flex:1">
+    <div class="undo-toast-msg" id="undo-toast-msg">Logged</div>
+    <div class="undo-toast-bar"><div class="undo-toast-progress" id="undo-progress"></div></div>
+  </div>
+  <button class="undo-btn" onclick="requestUndo()">Undo</button>
+</div>
+
+<!-- FIX 1: UNDO CONFIRM MODAL -->
+<div class="undo-confirm-overlay hidden" id="undo-confirm">
+  <div class="undo-confirm-box">
+    <div class="undo-confirm-title">Undo this log?</div>
+    <div class="undo-confirm-sub" id="undo-confirm-msg">This will remove the entry and cancel the pipeline response.</div>
+    <div class="undo-confirm-btns">
+      <button class="undo-confirm-yes" onclick="confirmUndo()">Yes, undo it</button>
+      <button class="undo-confirm-no" onclick="cancelUndo()">Keep it</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOP NAV -->
 <div class="topnav">
   <div class="nav-left">
@@ -443,6 +540,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   </div>
   <div class="nav-right">
     <div class="api-badge connected" id="api-badge">● live</div>
+    <!-- FIX 4: Return to dashboard button in nav for logged-in users -->
+    <button class="return-btn" id="nav-return-btn" onclick="showOnboarding()">Switch user</button>
     <button class="log-btn" onclick="openLog()">+ Log moment</button>
   </div>
 </div>
@@ -464,8 +563,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
     <div class="sidebar-section">
       <div class="sidebar-label">Quick actions</div>
+      <!-- FIX 1 + FIX 2: Quick actions now go through pipeline via confirmLog flow with undo -->
       <div class="sb-item on" onclick="openLog()"><div class="sb-icon">⚡</div><div class="sb-text">Log a craving</div></div>
-      <div class="sb-item" onclick="tapQR('I just resisted an urge')"><div class="sb-icon">💪</div><div class="sb-text">Log resistance</div></div>
+      <div class="sb-item" onclick="quickAction('resisted')"><div class="sb-icon">💪</div><div class="sb-text">Log resistance</div></div>
       <div class="sb-item" onclick="tapQR('Give me a CBT technique for my craving right now')"><div class="sb-icon">🧠</div><div class="sb-text">CBT technique</div></div>
       <div class="sb-item" onclick="tapQR('I need professional support resources')"><div class="sb-icon">🏥</div><div class="sb-text">Find support</div></div>
     </div>
@@ -486,11 +586,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
   <!-- COACH VIEW -->
   <div class="view on" id="view-coach">
-    <!-- Chat messages -->
     <div class="chat-messages" id="chat-msgs"></div>
-    <!-- Quick replies -->
     <div class="qr-row" id="qr-row"></div>
-    <!-- Input -->
     <div class="chat-input-wrap">
       <button class="log-btn" onclick="openLog()">Log</button>
       <textarea class="chat-input" id="chat-in" placeholder="Talk to Lily..." rows="1"
@@ -642,31 +739,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
         <div id="agent-swaps">
           <div class="agent-swap">
-            <div class="as-head">
-              <span class="as-name">User State Agent</span>
-              <button class="as-toggle" id="ast-state" onclick="toggleAgentSwap('state')">default</button>
-            </div>
+            <div class="as-head"><span class="as-name">User State Agent</span><button class="as-toggle" id="ast-state" onclick="toggleAgentSwap('state')">default</button></div>
             <textarea class="as-prompt" id="asp-state" placeholder="Enter custom system prompt for this agent..."></textarea>
           </div>
           <div class="agent-swap">
-            <div class="as-head">
-              <span class="as-name">Prediction Agent</span>
-              <button class="as-toggle" id="ast-predict" onclick="toggleAgentSwap('predict')">default</button>
-            </div>
+            <div class="as-head"><span class="as-name">Prediction Agent</span><button class="as-toggle" id="ast-predict" onclick="toggleAgentSwap('predict')">default</button></div>
             <textarea class="as-prompt" id="asp-predict" placeholder="Enter custom system prompt for this agent..."></textarea>
           </div>
           <div class="agent-swap">
-            <div class="as-head">
-              <span class="as-name">Intervention Agent</span>
-              <button class="as-toggle" id="ast-intervene" onclick="toggleAgentSwap('intervene')">default</button>
-            </div>
+            <div class="as-head"><span class="as-name">Intervention Agent</span><button class="as-toggle" id="ast-intervene" onclick="toggleAgentSwap('intervene')">default</button></div>
             <textarea class="as-prompt" id="asp-intervene" placeholder="Enter custom system prompt for this agent..."></textarea>
           </div>
           <div class="agent-swap">
-            <div class="as-head">
-              <span class="as-name">Orchestrator Agent</span>
-              <button class="as-toggle" id="ast-orch" onclick="toggleAgentSwap('orch')">default</button>
-            </div>
+            <div class="as-head"><span class="as-name">Orchestrator Agent</span><button class="as-toggle" id="ast-orch" onclick="toggleAgentSwap('orch')">default</button></div>
             <textarea class="as-prompt" id="asp-orch" placeholder="Enter custom system prompt for this agent..."></textarea>
           </div>
         </div>
@@ -674,11 +759,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
         <div class="api-section-title">Pipeline endpoint</div>
         <div class="api-info">Run the full pipeline programmatically. Send a craving event, get back structured agent outputs.</div>
         <div style="background:var(--card3);border:1px solid var(--border);border-radius:7px;padding:10px;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7;margin-bottom:8px">
-          POST /api/pipeline<br>
-          Content-Type: application/json<br><br>
-          {"craving":8,"stress":7,<br>
-          "contexts":["After coffee"],<br>
-          "memory":[...]}<br>
+          POST /api/pipeline<br>Content-Type: application/json<br><br>
+          {"craving":8,"stress":7,<br>"contexts":["After coffee"],<br>"memory":[...]}<br>
         </div>
         <button class="api-btn secondary" onclick="runTestPipeline()">Run test pipeline</button>
         <div class="json-output" id="test-pipeline-output"></div>
@@ -695,19 +777,60 @@ let memory = [];
 let todayUses = 0, resisted = 0, streak = 4;
 let typing = false;
 let chosenLog = null;
-// API calls handled server-side via /api/chat and /api/pipeline
-let apiKey = 'server'; // key lives in Vercel env, not browser
 let customAgents = { state: null, predict: null, intervene: null, orch: null };
 let lastPipelineOutput = null;
 
+// ── FIX 1: Undo state ──
+let undoState = null;      // { type, msgCount, statsDelta }
+let undoTimer = null;
+let undoPipelineAborted = false;
+
+// ── FIX 4: Persistent session via localStorage ──
+function loadSession() {
+  try {
+    const saved = localStorage.getItem('lily_profile');
+    if (saved) {
+      const p = JSON.parse(saved);
+      if (p.name) {
+        profile = p;
+        todayUses = parseInt(localStorage.getItem('lily_uses') || '0');
+        resisted  = parseInt(localStorage.getItem('lily_resisted') || '0');
+        streak    = parseInt(localStorage.getItem('lily_streak') || '4');
+        return true; // existing user
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+function saveSession() {
+  try {
+    localStorage.setItem('lily_profile', JSON.stringify(profile));
+    localStorage.setItem('lily_uses', todayUses);
+    localStorage.setItem('lily_resisted', resisted);
+    localStorage.setItem('lily_streak', streak);
+  } catch(e) {}
+}
+
+function showOnboarding() {
+  // Show return button if user already exists
+  const hasProfile = !!profile.name;
+  document.getElementById('return-dash-btn').style.display = hasProfile ? 'block' : 'none';
+  document.getElementById('onboard-overlay').classList.remove('hidden');
+}
+
+function returnToDashboard() {
+  document.getElementById('onboard-overlay').classList.add('hidden');
+}
+
 // ── Onboarding ──
-let obStep_n = 0;
 function obStep(from, to) {
   document.getElementById('ms'+from).classList.remove('on');
   document.getElementById('ms'+to).classList.add('on');
   document.getElementById('od'+from).classList.remove('on');
   document.getElementById('od'+to).classList.add('on');
 }
+
 function selectOb(btn, key, val) {
   btn.closest('.ob-opts').querySelectorAll('.ob-opt').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
@@ -719,6 +842,9 @@ function selectOb(btn, key, val) {
 async function finishOnboard() {
   profile.name = document.getElementById('ob-name').value.trim() || 'there';
   document.getElementById('onboard-overlay').classList.add('hidden');
+  // FIX 4: Show nav return button now that user is set up
+  document.getElementById('nav-return-btn').classList.add('visible');
+  saveSession();
   updateProfileCard();
   updateProgress();
   await sleep(200);
@@ -735,7 +861,7 @@ function updateProfileCard() {
   pc.style.display = 'block';
   document.getElementById('pc-name').textContent = profile.name;
   const gm = { reduce:'Reduce Protocol', optimize:'Optimize Protocol', stabilize:'Stabilize Protocol' };
-  document.getElementById('pc-proto').textContent = gm[profile.goal]||'Stabilize';
+  document.getElementById('pc-proto').textContent = gm[profile.goal] || 'Stabilize';
   document.getElementById('pc-streak').textContent = streak;
   document.getElementById('pc-uses').textContent = todayUses;
   document.getElementById('pc-resist').textContent = resisted;
@@ -757,57 +883,46 @@ function switchRpTab(name, btn) {
   document.getElementById('rps-'+name).classList.add('on');
 }
 
-// ── API Key ──
-function updateApiKey(val) {}
-function saveApiKey() {}
-
 // ── Agent swaps ──
 function toggleAgentSwap(id) {
   const btn = document.getElementById('ast-'+id);
   const prompt = document.getElementById('asp-'+id);
   if(btn.classList.contains('on')) {
-    btn.classList.remove('on');
-    btn.textContent = 'default';
-    prompt.classList.remove('show');
-    customAgents[id] = null;
+    btn.classList.remove('on'); btn.textContent='default';
+    prompt.classList.remove('show'); customAgents[id]=null;
   } else {
-    btn.classList.add('on');
-    btn.textContent = 'custom';
-    prompt.classList.add('show');
+    btn.classList.add('on'); btn.textContent='custom'; prompt.classList.add('show');
   }
 }
 
 // ── Pipeline status UI ──
 function setAgentStatus(idx, status, output) {
   const row = document.getElementById('ar-'+idx);
-  const st = document.getElementById('ars-'+idx);
+  const st  = document.getElementById('ars-'+idx);
   const out = document.getElementById('aro-'+idx);
   row.className = 'agent-row ' + status;
-  st.className = 'ar-status ' + status;
-  st.textContent = status === 'running' ? '● running' : status === 'done' ? '✓ done' : status === 'error' ? '✗ error' : 'idle';
-  if(output) {
-    out.textContent = output;
-    out.classList.add('show');
-  } else {
-    out.classList.remove('show');
-  }
+  st.className  = 'ar-status ' + status;
+  st.textContent = status==='running'?'● running':status==='done'?'✓ done':status==='error'?'✗ error':'idle';
+  if(output){ out.textContent=output; out.classList.add('show'); }
+  else { out.classList.remove('show'); }
 }
 
 function resetPipeline() {
-  for(let i=0;i<4;i++) setAgentStatus(i, 'idle', '');
+  for(let i=0;i<4;i++) setAgentStatus(i,'idle','');
   document.getElementById('sb-pipeline-badge').style.display='none';
 }
 
 // ── Full agentic pipeline ──
 async function runAgenticPipeline(craving, stress, contexts) {
-  const key = apiKey || 'demo';
+  undoPipelineAborted = false;
   document.getElementById('sb-pipeline-badge').style.display='flex';
+  // FIX 2: Always switch to pipeline tab so user can see agents fire
   switchRpTab('pipeline', document.getElementById('rp-pipeline'));
 
   const callLLM = async (system, user) => {
+    if(undoPipelineAborted) throw new Error('aborted');
     const res = await fetch('/api/chat', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({system, messages:[{role:'user',content:user}], max_tokens:600})
     });
     const d = await res.json();
@@ -817,7 +932,7 @@ async function runAgenticPipeline(craving, stress, contexts) {
     catch(e) { const m=txt.match(/\{[\s\S]*\}/); return m?JSON.parse(m[0]):null; }
   };
 
-  // ── Agent 1: User State ──
+  // Agent 1: User State
   setAgentStatus(0,'running','');
   let state;
   try {
@@ -826,14 +941,18 @@ Output ONLY valid JSON matching this schema exactly:
 {"event":{"craving":number,"stress":number,"contexts":string[],"time":string},"usage":{"today":number,"target":number,"status":"on_track"|"at_risk"|"exceeded"},"patterns":string[],"high_risk_triggers":string[],"streak_days":number,"memory_summary":string}
 patterns: 2-3 short behavioral observations. If no memory, infer from event context.`;
     const userState = `Craving ${craving}/10 | Stress ${stress}/10 | Context: ${contexts.join(', ')} | Time: ${new Date().toLocaleTimeString()} | Uses today: ${todayUses} | Target: ${profile.freq==='high'?10:profile.freq==='mod'?6:4} | Streak: ${streak} days
-Memory entries:\n${memory.length ? memory.map(m=>`- ${m}`).join('\n') : '(no prior memory)'}`;
+Memory entries:\n${memory.length?memory.map(m=>`- ${m}`).join('\n'):'(no prior memory)'}`;
     const raw = await callLLM(sysState, userState);
     state = raw || { event:{craving,stress,contexts,time:new Date().toLocaleTimeString()}, usage:{today:todayUses,target:5,status:'on_track'}, patterns:[`Post-${contexts[0]||'event'} trigger pattern`,`${stress>6?'High':'Moderate'} stress state`], high_risk_triggers:contexts, streak_days:streak, memory_summary:`User at craving ${craving}/10 with ${stress>6?'elevated':'moderate'} stress` };
     setAgentStatus(0,'done',`Risk drivers: ${state.patterns?.slice(0,1).join(', ')||'—'}`);
-    document.getElementById('mem-state').textContent = `Craving ${craving}/10 · Stress ${stress}/10 · ${contexts.join(', ')}`;
-  } catch(e) { setAgentStatus(0,'error',e.message); state = {event:{craving,stress,contexts},patterns:[],streak_days:streak,memory_summary:''}; }
+    document.getElementById('mem-state').textContent=`Craving ${craving}/10 · Stress ${stress}/10 · ${contexts.join(', ')}`;
+  } catch(e) {
+    if(e.message==='aborted') return null;
+    setAgentStatus(0,'error',e.message);
+    state={event:{craving,stress,contexts},patterns:[],streak_days:streak,memory_summary:''};
+  }
 
-  // ── Agent 2: Prediction ──
+  // Agent 2: Prediction
   setAgentStatus(1,'running','');
   let predict;
   try {
@@ -842,118 +961,200 @@ Output ONLY valid JSON:
 {"probability":number,"risk":"low"|"moderate"|"high"|"critical","trajectory":"rising"|"stable"|"falling","peak_in_minutes":number,"drivers":string[],"protective":string[],"window_to_act":string}
 probability: 0.0 to 1.0. Calibrate carefully — low craving (1-3) should yield 0.1-0.3, moderate (4-6) 0.4-0.6, high (7-9) 0.65-0.85, extreme (10) 0.85-0.98.`;
     const raw = await callLLM(sysPredict, `State: ${JSON.stringify(state)}`);
-    predict = raw || { probability: Math.min(0.95, craving/10 * 0.85 + stress/10 * 0.15), risk: craving>=8?'high':craving>=5?'moderate':'low', trajectory:'rising', peak_in_minutes:15, drivers:[`Craving intensity ${craving}/10`], protective:['Streak momentum'], window_to_act:'Next 15 minutes' };
-    const pct = Math.round(predict.probability*100);
+    predict = raw || { probability:Math.min(0.95,craving/10*0.85+stress/10*0.15), risk:craving>=8?'high':craving>=5?'moderate':'low', trajectory:'rising', peak_in_minutes:15, drivers:[`Craving intensity ${craving}/10`], protective:['Streak momentum'], window_to_act:'Next 15 minutes' };
+    const pct=Math.round(predict.probability*100);
     setAgentStatus(1,'done',`${pct}% risk · ${predict.risk} · peaks ~${predict.peak_in_minutes}min`);
-    document.getElementById('mem-risk').innerHTML = `<strong>${pct}%</strong> · ${predict.risk} · peaks in ${predict.peak_in_minutes} min`;
-  } catch(e) { setAgentStatus(1,'error',e.message); predict={probability:0.7,risk:'moderate',trajectory:'rising',peak_in_minutes:15,drivers:[],protective:[]}; }
+    document.getElementById('mem-risk').innerHTML=`<strong>${pct}%</strong> · ${predict.risk} · peaks in ${predict.peak_in_minutes} min`;
+  } catch(e) {
+    if(e.message==='aborted') return null;
+    setAgentStatus(1,'error',e.message);
+    predict={probability:0.7,risk:'moderate',trajectory:'rising',peak_in_minutes:15,drivers:[],protective:[]};
+  }
 
-  // ── Agent 3: Intervention ──
+  // Agent 3: Intervention
   setAgentStatus(2,'running','');
   let intervention;
   try {
-    const strategies = 'delay_tactic (urge surfing — wait 15 min), cognitive_reframing (question the craving thought), behavioral_substitution (replace with an action), motivational_nudge (remind of goal + wins), social_support (reach out to someone), environmental_change (remove yourself from trigger)';
+    const strategies='delay_tactic (urge surfing — wait 15 min), cognitive_reframing (question the craving thought), behavioral_substitution (replace with an action), motivational_nudge (remind of goal + wins), social_support (reach out to someone), environmental_change (remove yourself from trigger)';
     const sysInt = customAgents.intervene || `You are the Intervention Agent for Lily, a CBT-grounded nicotine reduction coach.
 Available strategies: ${strategies}
 Output ONLY valid JSON:
 {"strategy":string,"message":string,"action":string,"effectiveness":number,"rationale":string,"cbt_technique":string}
 message: warm, direct, 2-3 sentences. action: one concrete step. cbt_technique: name the CBT approach used.`;
     const raw = await callLLM(sysInt, `State: ${JSON.stringify(state)}\nPrediction: ${JSON.stringify(predict)}`);
-    intervention = raw || {
-      strategy: predict.risk==='low'?'motivational_nudge':'delay_tactic',
-      message: predict.risk==='low' ? `You're doing well — craving intensity is low right now. This is a good moment to reinforce the pattern.` : `Notice the craving and let it be there without acting on it. It will peak in about ${predict.peak_in_minutes} minutes, then fall. You don't have to fight it — just wait it out.`,
-      action: predict.risk==='low' ? 'Take a moment to acknowledge the progress' : 'Set a 15-minute timer. Do anything else until it goes off.',
-      effectiveness: 0.72,
-      rationale: 'Craving surfing technique — let the wave rise and fall without acting',
-      cbt_technique: predict.risk==='low' ? 'Motivational reinforcement' : 'Urge surfing / delay tactic'
-    };
+    intervention = raw || { strategy:predict.risk==='low'?'motivational_nudge':'delay_tactic', message:predict.risk==='low'?`You're doing well — craving intensity is low right now.`:`Notice the craving and let it be there without acting on it. It peaks in about ${predict.peak_in_minutes} minutes then falls.`, action:predict.risk==='low'?'Take a moment to acknowledge the progress':'Set a 15-minute timer. Do anything else until it goes off.', effectiveness:0.72, rationale:'Craving surfing technique', cbt_technique:predict.risk==='low'?'Motivational reinforcement':'Urge surfing / delay tactic' };
     setAgentStatus(2,'done',`${intervention.strategy.replace(/_/g,' ')} · ${intervention.cbt_technique||'CBT'}`);
-    document.getElementById('mem-intervention').innerHTML = `<strong>${intervention.strategy.replace(/_/g,' ')}</strong><br>${intervention.message?.slice(0,80)}...`;
-  } catch(e) { setAgentStatus(2,'error',e.message); intervention={strategy:'delay_tactic',message:'Notice the craving. Give it 15 minutes.',action:'Set a timer.',effectiveness:0.7,cbt_technique:'Urge surfing'}; }
+    document.getElementById('mem-intervention').innerHTML=`<strong>${intervention.strategy.replace(/_/g,' ')}</strong><br>${intervention.message?.slice(0,80)}...`;
+  } catch(e) {
+    if(e.message==='aborted') return null;
+    setAgentStatus(2,'error',e.message);
+    intervention={strategy:'delay_tactic',message:'Notice the craving. Give it 15 minutes.',action:'Set a timer.',effectiveness:0.7,cbt_technique:'Urge surfing'};
+  }
 
-  // ── Agent 4: Orchestrator ──
+  // Agent 4: Orchestrator
   setAgentStatus(3,'running','');
   let orch;
   try {
     const sysOrch = customAgents.orch || `You are the Orchestrator Agent for Lily. You make the final decision and write the memory update.
 Output ONLY valid JSON:
 {"decision":"approve"|"override"|"escalate","final_message":string,"override_reason":string|null,"escalate_to_professional":boolean,"long_term_note":string,"memory_write":string,"next_checkin_minutes":number}
-escalate_to_professional: true only if craving >= 9 AND stress >= 8, OR if the user seems in crisis.
+escalate_to_professional: true only if craving >= 9 AND stress >= 8.
 next_checkin_minutes: 15-30 for high risk, 60-120 for moderate, 120+ for low.`;
     const raw = await callLLM(sysOrch, `State: ${JSON.stringify(state)}\nPrediction: ${JSON.stringify(predict)}\nIntervention: ${JSON.stringify(intervention)}`);
-    orch = raw || {
-      decision:'approve',
-      final_message: intervention.message,
-      override_reason:null,
-      escalate_to_professional: craving>=9 && stress>=8,
-      long_term_note:`Continue monitoring ${contexts.join('/')} triggers. Craving at ${craving}/10.`,
-      memory_write:`${new Date().toLocaleTimeString()} — craving ${craving}/10, stress ${stress}/10. Used ${intervention.strategy.replace(/_/g,' ')}. ${predict.risk} risk.`,
-      next_checkin_minutes: predict.risk==='low'?120:predict.risk==='moderate'?60:30
-    };
+    orch = raw || { decision:'approve', final_message:intervention.message, override_reason:null, escalate_to_professional:craving>=9&&stress>=8, long_term_note:`Continue monitoring ${contexts.join('/')} triggers.`, memory_write:`${new Date().toLocaleTimeString()} — craving ${craving}/10, stress ${stress}/10. Used ${intervention.strategy.replace(/_/g,' ')}. ${predict.risk} risk.`, next_checkin_minutes:predict.risk==='low'?120:predict.risk==='moderate'?60:30 };
     setAgentStatus(3,'done',`${orch.decision} · check-in in ${orch.next_checkin_minutes}min`);
 
-    // Write to memory
     if(orch.memory_write) {
       memory.push(orch.memory_write);
-      if(memory.length > 8) memory.shift();
-      const log = document.getElementById('mem-log');
-      const entry = document.createElement('div');
-      entry.className = 'memory-entry';
-      entry.textContent = orch.memory_write;
-      if(log.children.length === 1 && log.children[0].style.fontStyle === 'italic') log.innerHTML='';
-      log.insertBefore(entry, log.firstChild);
+      if(memory.length>8) memory.shift();
+      const log=document.getElementById('mem-log');
+      const entry=document.createElement('div');
+      entry.className='memory-entry';entry.textContent=orch.memory_write;
+      if(log.children.length===1&&log.children[0].style.fontStyle==='italic') log.innerHTML='';
+      log.insertBefore(entry,log.firstChild);
     }
 
-    // Pipeline JSON
-    const pipelineOut = { state, prediction:predict, intervention, orchestrator:orch };
-    lastPipelineOutput = pipelineOut;
-    const jsonEl = document.getElementById('pipeline-json');
-    jsonEl.textContent = JSON.stringify(pipelineOut, null, 2);
+    const pipelineOut={state,prediction:predict,intervention,orchestrator:orch};
+    lastPipelineOutput=pipelineOut;
+    const jsonEl=document.getElementById('pipeline-json');
+    jsonEl.textContent=JSON.stringify(pipelineOut,null,2);
     jsonEl.classList.add('show');
+    document.getElementById('progress-state').textContent=orch.long_term_note||'Pipeline completed.';
 
-    // Update progress state
-    document.getElementById('progress-state').textContent = orch.long_term_note || 'Pipeline completed.';
-
-    // Escalate if needed
     if(orch.escalate_to_professional) {
-      await voliMsg("I want to flag something — what you're describing sounds intense. I can help, but for what you're going through, I'd genuinely recommend talking to a doctor or addiction counselor too. I can help you find resources if you'd like.", false);
+      await voliMsg("I want to flag something — what you're describing sounds intense. I can help, but for what you're going through, I'd genuinely recommend talking to a doctor or addiction counselor too.", false);
     }
-
     return orch;
-  } catch(e) { setAgentStatus(3,'error',e.message); orch={decision:'approve',final_message:intervention.message,escalate_to_professional:false,memory_write:'',next_checkin_minutes:60}; return orch; }
+  } catch(e) {
+    if(e.message==='aborted') return null;
+    setAgentStatus(3,'error',e.message);
+    return {decision:'approve',final_message:intervention?.message||'',escalate_to_professional:false,memory_write:'',next_checkin_minutes:60};
+  }
+}
+
+// ── FIX 1: Undo system ──
+function showUndoToast(label, type) {
+  const toast = document.getElementById('undo-toast');
+  const msg   = document.getElementById('undo-toast-msg');
+  const prog  = document.getElementById('undo-progress');
+  msg.textContent = label;
+  toast.classList.add('visible');
+  // Animate progress bar draining over 5s
+  prog.style.transition = 'none';
+  prog.style.width = '100%';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      prog.style.transition = 'width 5s linear';
+      prog.style.width = '0%';
+    });
+  });
+  if(undoTimer) clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => {
+    hideUndoToast();
+    undoState = null;
+  }, 5000);
+}
+
+function hideUndoToast() {
+  document.getElementById('undo-toast').classList.remove('visible');
+  if(undoTimer){ clearTimeout(undoTimer); undoTimer=null; }
+}
+
+function requestUndo() {
+  hideUndoToast();
+  if(!undoState) return;
+  const msgs = {
+    used: 'Undo "Used nicotine" log? Your count and pipeline response will be removed.',
+    resisted: 'Undo "Resisted urge" log? Your count and pipeline response will be removed.',
+    craving: 'Undo "Strong craving" log? The pipeline response will be removed.',
+    stressed: 'Undo "Stressed / triggered" log? The pipeline response will be removed.',
+  };
+  document.getElementById('undo-confirm-msg').textContent = msgs[undoState.type] || 'This will remove the log entry.';
+  document.getElementById('undo-confirm').classList.remove('hidden');
+}
+
+function confirmUndo() {
+  document.getElementById('undo-confirm').classList.add('hidden');
+  if(!undoState) return;
+  // Abort pipeline if still running
+  undoPipelineAborted = true;
+  // Revert stats
+  if(undoState.type === 'used' && todayUses > 0) todayUses--;
+  if(undoState.type === 'resisted' && resisted > 0) resisted--;
+  // Remove messages added since log
+  const msgs = document.getElementById('chat-msgs');
+  while(msgs.children.length > undoState.msgCount) {
+    msgs.removeChild(msgs.lastChild);
+  }
+  // Revert pipeline UI
+  resetPipeline();
+  if(memory.length > 0) memory.pop();
+  updateProgress(); updateProfileCard(); saveSession();
+  undoState = null;
+  // Show confirmation in chat
+  addMsg('voli', 'Got it — that log has been removed. No worries.');
+}
+
+function cancelUndo() {
+  document.getElementById('undo-confirm').classList.add('hidden');
+  undoState = null;
+}
+
+// ── FIX 2: Quick action for sidebar — fires pipeline directly ──
+async function quickAction(type) {
+  const msgs = { resisted:'I just resisted an urge 💪' };
+  const cravingMap = { resisted:6 };
+  const stressMap  = { resisted:4 };
+  const ctxMap     = { resisted:['Urge resisted'] };
+  const label      = { resisted:'Resistance logged' };
+
+  resisted++;
+  updateProgress(); updateProfileCard(); saveSession();
+
+  // Save undo state BEFORE pipeline fires
+  const msgCount = document.getElementById('chat-msgs').children.length;
+  undoState = { type, msgCount };
+  showUndoToast(label[type] || 'Logged', type);
+
+  switchView('coach', document.querySelectorAll('.nav-tab')[0]);
+  document.querySelectorAll('.nav-tab')[0].classList.add('on');
+
+  addMsg('user', msgs[type]);
+  chatHistory.push({role:'user',content:msgs[type]});
+
+  const orch = await runAgenticPipeline(cravingMap[type], stressMap[type], ctxMap[type]);
+  if(undoPipelineAborted) return;
+
+  if(typing) return;
+  typing = true; showTyping(); await sleep(600);
+  const reply = orch?.final_message || "You resisted. That's the whole thing — one moment at a time.";
+  rmTyping(); addMsg('voli', reply);
+  chatHistory.push({role:'assistant',content:reply});
+  typing = false;
+
+  showQR(['It was hard','What helped','Keep going']);
 }
 
 // ── Chat ──
 const sleep = ms=>new Promise(r=>setTimeout(r,ms));
-function nowStr() { const d=new Date(); return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
+function nowStr(){const d=new Date();return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();}
 
 function addMsg(role, text) {
-  const wrap = document.getElementById('chat-msgs');
-  const div = document.createElement('div');
-  div.className = 'msg '+role;
-  const t = nowStr();
-  if(role==='voli') {
-    div.innerHTML = `<div class="msg-av">🌿</div><div class="msg-body"><div class="msg-bbl">${text.replace(/\n/g,'<br>')}</div><div class="msg-meta"><span>${t}</span><span class="agent-tag">lily</span></div></div>`;
-  } else {
-    div.innerHTML = `<div class="msg-body"><div class="msg-bbl">${text}</div><div class="msg-meta" style="justify-content:flex-end">${t}</div></div><div class="msg-av" style="background:var(--green-d);border-color:var(--green-d)">🧍</div>`;
-  }
-  wrap.appendChild(div);
-  wrap.scrollTop=wrap.scrollHeight;
-}
-
-function showTyping() {
   const wrap=document.getElementById('chat-msgs');
-  const div=document.createElement('div');div.className='msg voli';div.id='typing';
-  div.innerHTML=`<div class="msg-av">🌿</div><div class="msg-body"><div class="msg-bbl"><div class="typing-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
+  const div=document.createElement('div');div.className='msg '+role;
+  const t=nowStr();
+  if(role==='voli'){
+    div.innerHTML=`<div class="msg-av">🌿</div><div class="msg-body"><div class="msg-bbl">${text.replace(/\n/g,'<br>')}</div><div class="msg-meta"><span>${t}</span><span class="agent-tag">lily</span></div></div>`;
+  } else {
+    div.innerHTML=`<div class="msg-body"><div class="msg-bbl">${text}</div><div class="msg-meta" style="justify-content:flex-end">${t}</div></div><div class="msg-av" style="background:var(--green-d);border-color:var(--green-d)">🧍</div>`;
+  }
   wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight;
 }
+
+function showTyping(){const wrap=document.getElementById('chat-msgs');const div=document.createElement('div');div.className='msg voli';div.id='typing';div.innerHTML=`<div class="msg-av">🌿</div><div class="msg-body"><div class="msg-bbl"><div class="typing-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight;}
 function rmTyping(){document.getElementById('typing')?.remove();}
 
-function showQR(opts) {
-  const row=document.getElementById('qr-row');
-  row.style.display='flex';
-  row.innerHTML=opts.map(o=>`<button class="qr" onclick="tapQR('${o.replace(/'/g,"\\'")}')"> ${o}</button>`).join('');
-}
+function showQR(opts){const row=document.getElementById('qr-row');row.style.display='flex';row.innerHTML=opts.map(o=>`<button class="qr" onclick="tapQR('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('');}
 function hideQR(){const r=document.getElementById('qr-row');r.style.display='none';r.innerHTML='';}
 
 async function tapQR(text){hideQR();addMsg('user',text);chatHistory.push({role:'user',content:text});await getReply(text,null);}
@@ -976,7 +1177,7 @@ async function getReply(userMsg, pipelineOrch) {
     const gm={reduce:'Reduce (cut back gradually)',optimize:'Optimize (intentional)',stabilize:'Stabilize (reset)'};
     const fm={low:'light',mod:'moderate',high:'heavy'};
     const tm={stress:'stress/anxiety',social:'social',routine:'routine',boredom:'boredom'};
-    const pipelineContext = pipelineOrch ? `\nLast pipeline: risk ${Math.round((lastPipelineOutput?.prediction?.probability||0.5)*100)}%, strategy ${lastPipelineOutput?.intervention?.strategy||'—'}, orchestrator ${pipelineOrch.decision||'approve'}.` : '';
+    const pipelineContext=pipelineOrch?`\nLast pipeline: risk ${Math.round((lastPipelineOutput?.prediction?.probability||0.5)*100)}%, strategy ${lastPipelineOutput?.intervention?.strategy||'—'}, orchestrator ${pipelineOrch.decision||'approve'}.`:'';
     const sys=`You are Lily, a warm and intelligent quit coach for nicotine reduction. You feel like a supportive human coach — not a clinical app, not a replacement for professional care.
 
 User: ${profile.name||'the user'} | Protocol: ${gm[profile.goal]||'Stabilize'} | Frequency: ${fm[profile.freq]||'moderate'} | Trigger: ${tm[profile.trigger]||'stress'} | Streak: ${streak} days | Uses today: ${todayUses} | Resisted: ${resisted}${pipelineContext}
@@ -985,9 +1186,7 @@ Your interventions are grounded in CBT: delay tactics (urge surfing — wait 15 
 
 Personality: warm, direct, occasionally dry wit. Keep replies SHORT — 2-4 sentences. One follow-up question max. When struggling: offer ONE specific CBT strategy. When succeeding: acknowledge specifically. Never preachy.
 
-If the user expresses severe distress or mentions other substances, gently suggest speaking with a doctor or addiction counselor. Lily works best as part of a broader support plan.`;
-
-
+If the user expresses severe distress or mentions other substances, gently suggest speaking with a doctor or addiction counselor.`;
 
     const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,messages:chatHistory.slice(-12),max_tokens:200})});
     const d=await res.json();
@@ -1004,42 +1203,43 @@ If the user expresses severe distress or mentions other substances, gently sugge
 
 // ── Log modal ──
 function openLog(){document.getElementById('log-overlay').classList.remove('hidden');}
-function closelog(){document.getElementById('log-overlay').classList.add('hidden');}
+function closelog(){document.getElementById('log-overlay').classList.add('hidden');chosenLog=null;document.querySelectorAll('.log-opt').forEach(o=>o.classList.remove('sel'));}
 function selLog(btn,type){document.querySelectorAll('.log-opt').forEach(o=>o.classList.remove('sel'));btn.classList.add('sel');chosenLog=type;}
 
 async function confirmLog() {
   if(!chosenLog){closelog();return;}
-  const type=chosenLog;closelog();
+  const type=chosenLog; closelog();
   const msgs={used:'I just used nicotine',resisted:'I just resisted an urge 💪',craving:"I'm having a really strong craving right now",stressed:"I'm feeling really stressed and triggered"};
-
-  // Map log type to craving/stress levels for pipeline
   const cravingMap={used:7,resisted:6,craving:9,stressed:5};
-  const stressMap={used:6,resisted:4,craving:6,stressed:8};
-  const ctxMap={used:['Just used'],resisted:['Urge resisted'],craving:['Strong craving'],stressed:['Stress trigger']};
+  const stressMap ={used:6,resisted:4,craving:6,stressed:8};
+  const ctxMap    ={used:['Just used'],resisted:['Urge resisted'],craving:['Strong craving'],stressed:['Stress trigger']};
+  const toastLabel={used:'Use logged',resisted:'Resistance logged',craving:'Craving logged',stressed:'Stress moment logged'};
 
-  if(type==='used'){todayUses++;}
-  else if(type==='resisted'){resisted++;}
-  updateProgress();
-  updateProfileCard();
+  if(type==='used') todayUses++;
+  else if(type==='resisted') resisted++;
+  updateProgress(); updateProfileCard(); saveSession();
 
-  // Show in coach tab
-  switchView('coach', document.querySelector('.nav-tab'));
-  document.querySelector('.nav-tab').classList.add('on');
+  // FIX 1: Capture undo state before anything is added
+  const msgCount = document.getElementById('chat-msgs').children.length;
+  undoState = { type, msgCount };
+  showUndoToast(toastLabel[type], type);
 
-  addMsg('user',msgs[type]);
+  switchView('coach', document.querySelectorAll('.nav-tab')[0]);
+  document.querySelectorAll('.nav-tab')[0].classList.add('on');
+
+  addMsg('user', msgs[type]);
   chatHistory.push({role:'user',content:msgs[type]});
 
-  // Fire the full agentic pipeline
   const orch = await runAgenticPipeline(cravingMap[type], stressMap[type], ctxMap[type]);
+  if(undoPipelineAborted) return;
 
-  // Use orchestrator's final message as Lily's response if available
-  if(typing)return;
-  typing=true;showTyping();await sleep(800);
-  const finalMsg = orch?.final_message || msgs[type];
+  if(typing) return;
+  typing=true; showTyping(); await sleep(800);
+  const finalMsg = orch?.final_message || '';
   rmTyping();
   const response = finalMsg || await getConversationalReply(type, orch);
-  addMsg('voli', typeof response === 'string' ? response : finalMsg);
-  chatHistory.push({role:'assistant',content:typeof response === 'string' ? response : finalMsg});
+  addMsg('voli', typeof response==='string'?response:finalMsg);
+  chatHistory.push({role:'assistant',content:typeof response==='string'?response:finalMsg});
   typing=false;
 
   if(type==='used')showQR(['What triggered it','I feel bad about it','I\'ll do better']);
@@ -1049,20 +1249,20 @@ async function confirmLog() {
 }
 
 async function getConversationalReply(type, orch) {
-  const replies = {
-    used: "That happened. No spiral needed — just log it and we keep moving. What triggered it this time?",
-    resisted: "That's genuinely hard and you did it anyway. What did you use to get through it?",
-    craving: "Notice the craving without fighting it. Set a 15-minute timer. The wave peaks then falls — you just have to outlast it.",
-    stressed: "Stress and nicotine feel chemically linked but they're not. Before you reach: what's the actual thought underneath this?"
+  const replies={
+    used:"That happened. No spiral needed — just log it and we keep moving. What triggered it this time?",
+    resisted:"That's genuinely hard and you did it anyway. What did you use to get through it?",
+    craving:"Notice the craving without fighting it. Set a 15-minute timer. The wave peaks then falls — you just have to outlast it.",
+    stressed:"Stress and nicotine feel chemically linked but they're not. Before you reach: what's the actual thought underneath this?"
   };
-  return replies[type] || "I'm here. Tell me what's going on.";
+  return replies[type]||"I'm here. Tell me what's going on.";
 }
 
-function triggerProSupport() {
-  switchView('coach', document.querySelector('.nav-tab'));
+function triggerProSupport(){
+  switchView('coach',document.querySelectorAll('.nav-tab')[0]);
   addMsg('user','I think I need professional support');
   chatHistory.push({role:'user',content:'I think I need professional support'});
-  getReply('I think I need professional support', null);
+  getReply('I think I need professional support',null);
 }
 
 // ── Progress ──
@@ -1086,16 +1286,29 @@ function updateProgress() {
 
 // ── Test pipeline ──
 async function runTestPipeline() {
-  const out = document.getElementById('test-pipeline-output');
-  out.classList.add('show');
-  out.textContent = 'Running test pipeline...';
+  const out=document.getElementById('test-pipeline-output');
+  out.classList.add('show');out.textContent='Running test pipeline...';
   try {
-    const result = await runAgenticPipeline(7, 6, ['After coffee', 'Work pressure']);
-    out.textContent = JSON.stringify(lastPipelineOutput, null, 2);
-  } catch(e) {
-    out.textContent = 'Error: ' + e.message;
-  }
+    await runAgenticPipeline(7,6,['After coffee','Work pressure']);
+    out.textContent=JSON.stringify(lastPipelineOutput,null,2);
+  } catch(e){out.textContent='Error: '+e.message;}
 }
+
+// ── FIX 4: Init — check for returning user ──
+(function init() {
+  const isReturning = loadSession();
+  if(isReturning) {
+    // Skip onboarding, go straight to dashboard
+    document.getElementById('onboard-overlay').classList.add('hidden');
+    document.getElementById('nav-return-btn').classList.add('visible');
+    updateProfileCard();
+    updateProgress();
+    voliMsg(`Welcome back, ${profile.name} 👋 Ready when you are.`, true);
+    showQR(['I have a craving','I just resisted','How am I doing?']);
+  } else {
+    showOnboarding();
+  }
+})();
 </script>
 </body>
 </html>
