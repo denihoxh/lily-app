@@ -1373,7 +1373,6 @@ function checkCrisisKeywords(text) {
 }
 
 function updateStateCard(risk, summary, level) {
-  // level: 'stable' | 'at-risk' | 'high-risk'
   const pill = document.getElementById('state-pill');
   const sumEl = document.getElementById('state-summary');
   const fill = document.getElementById('state-risk-fill');
@@ -1389,10 +1388,53 @@ function updateStateCard(risk, summary, level) {
   fill.style.background = colors[level];
   meta.textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
+  // FIX 1: Always sync memory panel risk
+  document.getElementById('mem-risk').innerHTML = `<strong>${Math.round(risk*100)}%</strong> · ${level}`;
+
+  // FIX 3: Show chat banner for at-risk or high-risk
+  if (level !== 'stable') {
+    showChatBanner(summary, level);
+  } else {
+    hideChatBanner();
+  }
+
   // Show clinical flag if high risk and not dismissed
   if (level === 'high-risk' && !flagDismissed) {
     document.getElementById('clinical-flag').classList.add('visible');
   }
+}
+
+function showChatBanner(summary, level) {
+  let banner = document.getElementById('chat-state-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'chat-state-banner';
+    banner.style.cssText = `
+      padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+      gap:12px;flex-shrink:0;border-bottom:1px solid var(--border);
+      font-size:12px;transition:all 0.3s;cursor:pointer;
+    `;
+    banner.onclick = () => switchView('progress', document.querySelectorAll('.nav-tab')[1]);
+    // Insert above the chat messages
+    const chatPanel = document.getElementById('view-coach');
+    chatPanel.insertBefore(banner, chatPanel.firstChild);
+  }
+  const colors = { 'at-risk':'rgba(232,184,109,0.08)', 'high-risk':'rgba(232,112,112,0.08)' };
+  const borders = { 'at-risk':'rgba(232,184,109,0.25)', 'high-risk':'rgba(232,112,112,0.3)' };
+  const textColors = { 'at-risk':'var(--amber)', 'high-risk':'var(--red)' };
+  const icons = { 'at-risk':'🟡', 'high-risk':'🔴' };
+  banner.style.background = colors[level] || 'transparent';
+  banner.style.borderBottom = `1px solid ${borders[level] || 'var(--border)'}`;
+  banner.innerHTML = `
+    <span style="color:${textColors[level]};font-weight:500">${icons[level]} ${summary}</span>
+    <span style="color:var(--faint);font-size:11px;white-space:nowrap">View progress →</span>
+  `;
+  banner.style.display = 'flex';
+}
+
+function hideChatBanner() {
+  const banner = document.getElementById('chat-state-banner');
+  if (banner) banner.style.display = 'none';
 }
 
 function dismissFlag() {
@@ -1408,8 +1450,7 @@ async function passiveAnalysis() {
   const recentText = chatHistory.slice(-6).map(m => m.content).join(' ');
   if (checkCrisisKeywords(recentText) && !flagDismissed) {
     document.getElementById('clinical-flag').classList.add('visible');
-    updateStateCard(0.9, "You've mentioned something that concerns Lily. Please consider reaching out for support.", 'high-risk');
-    // Flash Prediction Agent
+    updateStateCard(0.9, `${profile.name||'You'} mentioned something that concerns Lily. Please consider reaching out for support.`, 'high-risk');
     setAgentStatus(1, 'running', '');
     await sleep(800);
     setAgentStatus(1, 'done', 'Crisis signal detected — flag raised');
@@ -1424,7 +1465,7 @@ async function passiveAnalysis() {
 {"probability":number,"level":"stable"|"at-risk"|"high-risk","summary":string}
 probability: 0.0–1.0 craving/relapse risk.
 level: stable if <0.4, at-risk if 0.4–0.7, high-risk if >0.7.
-summary: one warm plain-English sentence about the user's current state (max 20 words). No clinical jargon.`;
+summary: one warm plain-English sentence about the user's current state (max 20 words). Always refer to the user by name: ${profile.name||'the user'}. Never say "Lily". Example: "${profile.name||'the user'} is showing signs of stress — a craving window may be opening."  No clinical jargon.`;
 
     const res = await fetch('/api/chat', {
       method: 'POST',
