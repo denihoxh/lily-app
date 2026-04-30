@@ -245,7 +245,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
 /* ── ONBOARDING MODAL ── */
 .modal-overlay{
-  position:fixed;inset:0;background:var(--bg);backdrop-filter:none;
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
   z-index:200;display:flex;align-items:center;justify-content:center;
 }
 .modal-overlay.hidden{display:none;}
@@ -1002,8 +1002,12 @@ function selectOb(btn, key, val) {
 async function finishOnboard() {
   profile.name = document.getElementById('ob-name').value.trim() || 'there';
   document.getElementById('onboard-overlay').classList.add('hidden');
-  // FIX 4: Show nav return button now that user is set up
   document.getElementById('nav-return-btn').classList.add('visible');
+  // Explicitly show coach view — without this the page is blank
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-coach').classList.add('on');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nav-tab')[0].classList.add('on');
   saveSession();
   updateProfileCard();
   updateProgress();
@@ -1456,6 +1460,11 @@ async function runTestPipeline() {
 
 // ── FIX 4: Init — check for returning user ──
 (function init() {
+  // Always ensure coach view is the default visible view
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-coach').classList.add('on');
+  document.querySelectorAll('.nav-tab')[0].classList.add('on');
+
   const isReturning = loadSession();
   if(isReturning) {
     const savedPin = localStorage.getItem('lily_pin');
@@ -1464,11 +1473,9 @@ async function runTestPipeline() {
     updateProfileCard();
     updateProgress();
     if (savedPin) {
-      // Show PIN lock screen
       document.getElementById('pin-greeting').textContent = `Welcome back, ${profile.name}`;
       document.getElementById('pin-overlay').classList.remove('hidden');
     } else {
-      // No PIN — go straight to dashboard
       voliMsg(`Welcome back, ${profile.name} 👋 Ready when you are.`, true);
       showQR(['I have a craving','I just resisted','How am I doing?']);
     }
