@@ -393,12 +393,43 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px;}
 
+/* ── PIN LOCK SCREEN ── */
+.pin-overlay{
+  position:fixed;inset:0;background:var(--bg);
+  z-index:500;display:flex;align-items:center;justify-content:center;
+}
+.pin-overlay.hidden{display:none;}
+.pin-box{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  width:320px;max-width:90vw;padding:32px;text-align:center;
+}
+.pin-logo{font-family:var(--serif);font-size:32px;color:var(--gold);font-style:italic;margin-bottom:6px;}
+.pin-name{font-family:var(--serif);font-size:17px;color:var(--gold);font-style:italic;margin-bottom:4px;}
+.pin-welcome{font-size:12px;color:var(--muted);margin-bottom:24px;font-weight:300;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:24px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);transition:all 0.15s;}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);}
+.pin-dot.error{background:var(--red);border-color:var(--red);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pin-key{
+  padding:14px;border-radius:10px;border:1px solid var(--border);
+  background:var(--card2);color:var(--text);font-size:18px;font-family:var(--serif);
+  cursor:pointer;transition:all 0.12s;user-select:none;
+}
+.pin-key:hover{border-color:var(--border2);background:rgba(212,196,154,0.06);}
+.pin-key:active{transform:scale(0.94);}
+.pin-key.del{font-size:14px;color:var(--muted);font-family:var(--sans);}
+.pin-error{font-size:11px;color:var(--red);min-height:16px;margin-bottom:12px;}
+.pin-forgot{font-size:11px;color:var(--faint);cursor:pointer;}
+.pin-forgot:hover{color:var(--gold);}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pin-dots.shake{animation:shake 0.4s ease;}
+
 /* ── VIEWS ── */
 .view{display:none;flex:1;flex-direction:column;overflow:hidden;}
 .view.on{display:flex;}
 </style>
 </head>
-
 <body>
 
 <!-- ONBOARDING MODAL -->
@@ -411,6 +442,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
       <div class="ob-dot" id="od1"></div>
       <div class="ob-dot" id="od2"></div>
       <div class="ob-dot" id="od3"></div>
+      <div class="ob-dot" id="od4"></div>
     </div>
 
     <!-- Step 0: Name -->
@@ -470,10 +502,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
           <div class="ob-opt-s">Heavy use · a doctor or counselor alongside Lily will give you the best shot</div>
         </div>
       </div>
-      <button class="modal-cta" id="ms3-cta" disabled onclick="finishOnboard()">Start with Lily →</button>
+      <button class="modal-cta" id="ms3-cta" disabled onclick="obStep(3,4)">Continue →</button>
     </div>
-  </div>
-</div>
+
+    <!-- Step 4: PIN setup -->
+    <div class="modal-step" id="ms4">
+      <div class="ms-title">Set a PIN to protect your progress</div>
+      <div class="ms-sub">4 digits — you'll use this to log back in. Tap skip if you'd rather not.</div>
+      <div class="pin-dots" id="ob-pin-dots">
+        <div class="pin-dot" id="ob-pd0"></div>
+        <div class="pin-dot" id="ob-pd1"></div>
+        <div class="pin-dot" id="ob-pd2"></div>
+        <div class="pin-dot" id="ob-pd3"></div>
+      </div>
+      <div class="pin-pad">
+        <div class="pin-key" onclick="obPinKey('1')">1</div>
+        <div class="pin-key" onclick="obPinKey('2')">2</div>
+        <div class="pin-key" onclick="obPinKey('3')">3</div>
+        <div class="pin-key" onclick="obPinKey('4')">4</div>
+        <div class="pin-key" onclick="obPinKey('5')">5</div>
+        <div class="pin-key" onclick="obPinKey('6')">6</div>
+        <div class="pin-key" onclick="obPinKey('7')">7</div>
+        <div class="pin-key" onclick="obPinKey('8')">8</div>
+        <div class="pin-key" onclick="obPinKey('9')">9</div>
+        <div class="pin-key" onclick="obPinKey('skip')" style="font-size:11px;color:var(--faint);font-family:var(--sans)">skip</div>
+        <div class="pin-key" onclick="obPinKey('0')">0</div>
+        <div class="pin-key del" onclick="obPinKey('del')">⌫</div>
+      </div>
+      <div class="pin-error" id="ob-pin-error"></div>
+    </div>
 
 <!-- LOG MODAL -->
 <div class="log-overlay hidden" id="log-overlay">
@@ -525,6 +582,37 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
       <button class="undo-confirm-yes" onclick="confirmUndo()">Yes, undo it</button>
       <button class="undo-confirm-no" onclick="cancelUndo()">Keep it</button>
     </div>
+  </div>
+</div>
+
+<!-- PIN LOCK SCREEN -->
+<div class="pin-overlay hidden" id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-logo">lily.</div>
+    <div class="pin-name" id="pin-greeting">Welcome back</div>
+    <div class="pin-welcome">Enter your PIN to continue</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <div class="pin-key" onclick="pinKey('1')">1</div>
+      <div class="pin-key" onclick="pinKey('2')">2</div>
+      <div class="pin-key" onclick="pinKey('3')">3</div>
+      <div class="pin-key" onclick="pinKey('4')">4</div>
+      <div class="pin-key" onclick="pinKey('5')">5</div>
+      <div class="pin-key" onclick="pinKey('6')">6</div>
+      <div class="pin-key" onclick="pinKey('7')">7</div>
+      <div class="pin-key" onclick="pinKey('8')">8</div>
+      <div class="pin-key" onclick="pinKey('9')">9</div>
+      <div class="pin-key" style="opacity:0;pointer-events:none"></div>
+      <div class="pin-key" onclick="pinKey('0')">0</div>
+      <div class="pin-key del" onclick="pinKey('del')">⌫</div>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-forgot" onclick="forgotPin()">Forgot PIN? Start over</div>
   </div>
 </div>
 
@@ -775,7 +863,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 let profile = { name:'', goal:'stabilize', trigger:'stress', freq:'low' };
 let chatHistory = [];
 let memory = [];
-let todayUses = 0, resisted = 0, streak = 0;
+let todayUses = 0, resisted = 0, streak = 4;
 let typing = false;
 let chosenLog = null;
 let customAgents = { state: null, predict: null, intervene: null, orch: null };
@@ -785,6 +873,77 @@ let lastPipelineOutput = null;
 let undoState = null;      // { type, msgCount, statsDelta }
 let undoTimer = null;
 let undoPipelineAborted = false;
+
+// ── PIN system ──
+let pinBuffer = '';
+let obPinBuffer = '';
+
+function pinKey(k) {
+  const err = document.getElementById('pin-error');
+  err.textContent = '';
+  if (k === 'del') {
+    pinBuffer = pinBuffer.slice(0, -1);
+  } else {
+    if (pinBuffer.length >= 4) return;
+    pinBuffer += k;
+  }
+  updatePinDots('pd', pinBuffer, false);
+  if (pinBuffer.length === 4) {
+    const saved = localStorage.getItem('lily_pin');
+    if (pinBuffer === saved) {
+      document.getElementById('pin-overlay').classList.add('hidden');
+      pinBuffer = '';
+      voliMsg(`Hey ${profile.name} 👋 Good to have you back. Ready when you are.`, true);
+      showQR(['I have a craving','I just resisted','How am I doing?']);
+    } else {
+      const dots = document.getElementById('pin-dots');
+      for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
+      dots.classList.add('shake');
+      setTimeout(() => {
+        dots.classList.remove('shake');
+        for(let i=0;i<4;i++){
+          const d=document.getElementById('pd'+i);
+          d.classList.remove('error','filled');
+        }
+        err.textContent = 'Incorrect PIN — try again';
+        pinBuffer = '';
+      }, 400);
+    }
+  }
+}
+
+function updatePinDots(prefix, buf, isError) {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById(prefix + i);
+    if (!d) continue;
+    d.classList.toggle('filled', i < buf.length);
+    if (isError) d.classList.add('error');
+    else d.classList.remove('error');
+  }
+}
+
+function obPinKey(k) {
+  if (k === 'skip') { finishOnboard(); return; }
+  if (k === 'del') {
+    obPinBuffer = obPinBuffer.slice(0, -1);
+  } else {
+    if (obPinBuffer.length >= 4) return;
+    obPinBuffer += k;
+  }
+  updatePinDots('ob-pd', obPinBuffer, false);
+  if (obPinBuffer.length === 4) {
+    localStorage.setItem('lily_pin', obPinBuffer);
+    obPinBuffer = '';
+    finishOnboard();
+  }
+}
+
+function forgotPin() {
+  if (confirm('This will clear all your progress and start fresh. Are you sure?')) {
+    localStorage.clear();
+    location.reload();
+  }
+}
 
 // ── FIX 4: Persistent session via localStorage ──
 function loadSession() {
@@ -842,10 +1001,6 @@ function selectOb(btn, key, val) {
 
 async function finishOnboard() {
   profile.name = document.getElementById('ob-name').value.trim() || 'there';
-  // Clear any previous user's data before saving new profile
-  todayUses = 0; resisted = 0; streak = 0;
-  memory = []; chatHistory = [];
-  localStorage.clear();
   document.getElementById('onboard-overlay').classList.add('hidden');
   // FIX 4: Show nav return button now that user is set up
   document.getElementById('nav-return-btn').classList.add('visible');
@@ -1303,13 +1458,20 @@ async function runTestPipeline() {
 (function init() {
   const isReturning = loadSession();
   if(isReturning) {
-    // Skip onboarding, go straight to dashboard
+    const savedPin = localStorage.getItem('lily_pin');
     document.getElementById('onboard-overlay').classList.add('hidden');
     document.getElementById('nav-return-btn').classList.add('visible');
     updateProfileCard();
     updateProgress();
-    voliMsg(`Welcome back, ${profile.name} 👋 Ready when you are.`, true);
-    showQR(['I have a craving','I just resisted','How am I doing?']);
+    if (savedPin) {
+      // Show PIN lock screen
+      document.getElementById('pin-greeting').textContent = `Welcome back, ${profile.name}`;
+      document.getElementById('pin-overlay').classList.remove('hidden');
+    } else {
+      // No PIN — go straight to dashboard
+      voliMsg(`Welcome back, ${profile.name} 👋 Ready when you are.`, true);
+      showQR(['I have a craving','I just resisted','How am I doing?']);
+    }
   } else {
     showOnboarding();
   }
