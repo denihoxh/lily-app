@@ -1054,11 +1054,35 @@ async function finishOnboard() {
   profile.name = document.getElementById('ob-name').value.trim() || 'there';
   document.getElementById('onboard-overlay').classList.add('hidden');
   document.getElementById('nav-return-btn').classList.add('visible');
-  // Explicitly show coach view — without this the page is blank
+  // Explicitly show coach view
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.getElementById('view-coach').classList.add('on');
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.nav-tab')[0].classList.add('on');
+  // Reset ALL in-memory state for new user
+  chatHistory = [];
+  memory = [];
+  chatMsgCount = 0;
+  todayUses = 0;
+  resisted = 0;
+  streak = 0;
+  lastPipelineOutput = null;
+  flagDismissed = false;
+  // Clear chat UI
+  document.getElementById('chat-msgs').innerHTML = '';
+  document.getElementById('mem-log').innerHTML = '<div class="memory-entry" style="color:var(--faint);font-style:italic">Events will appear here as you log moments</div>';
+  document.getElementById('mem-state').textContent = 'No pipeline run yet';
+  document.getElementById('mem-risk').textContent = '—';
+  document.getElementById('mem-intervention').textContent = '—';
+  document.getElementById('progress-state').textContent = 'No pipeline run yet. Log a moment to fire the agents.';
+  document.getElementById('state-summary').textContent = 'Start chatting or log a moment — Lily will assess your state in real time.';
+  document.getElementById('state-pill').className = 'state-pill stable';
+  document.getElementById('state-pill').textContent = '🟢 Stable';
+  document.getElementById('state-risk-fill').style.width = '0%';
+  document.getElementById('state-meta').textContent = 'Not yet assessed';
+  document.getElementById('clinical-flag').classList.remove('visible');
+  hideChatBanner();
+  resetPipeline();
   saveSession();
   updateProfileCard();
   updateProgress();
