@@ -393,6 +393,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px;}
 
+/* ── STATE CARD & CLINICAL FLAG ── */
+.state-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px;}
+.state-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.state-card-title{font-size:11px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;}
+.state-pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:10px;font-family:var(--mono);}
+.state-pill.stable{background:rgba(74,174,138,0.15);color:var(--green);}
+.state-pill.at-risk{background:rgba(232,184,109,0.15);color:var(--amber);}
+.state-pill.high-risk{background:rgba(232,112,112,0.15);color:var(--red);}
+.state-summary{font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:8px;}
+.state-meta{font-size:10px;color:var(--faint);font-family:var(--mono);}
+.state-risk-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-top:10px;}
+.state-risk-fill{height:100%;border-radius:2px;transition:width 0.6s ease, background 0.4s ease;}
+
+.clinical-flag{
+  background:rgba(232,112,112,0.06);border:1px solid rgba(232,112,112,0.3);
+  border-radius:10px;padding:16px;margin-top:14px;display:none;
+}
+.clinical-flag.visible{display:block;}
+.cf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.cf-title{font-size:11px;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;font-weight:500;}
+.cf-dismiss{font-size:10px;color:var(--faint);cursor:pointer;border:1px solid var(--border);padding:2px 8px;border-radius:4px;background:transparent;font-family:var(--sans);}
+.cf-dismiss:hover{color:var(--text);border-color:var(--border2);}
+.cf-msg{font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:12px;}
+.cf-link{display:inline-block;padding:7px 14px;background:rgba(232,112,112,0.1);border:1px solid rgba(232,112,112,0.3);border-radius:7px;font-size:12px;color:var(--red);text-decoration:none;transition:all 0.15s;}
+.cf-link:hover{background:rgba(232,112,112,0.18);}
+
 /* ── PIN LOCK SCREEN ── */
 .pin-overlay{
   position:fixed;inset:0;background:var(--bg);
@@ -714,6 +740,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
         <div style="font-size:11px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Agent memory — last pipeline output</div>
         <div id="progress-state" style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7">No pipeline run yet. Log a moment to fire the agents.</div>
       </div>
+
+      <!-- PIECE 2: Lily's Read on You -->
+      <div class="state-card" id="state-card">
+        <div class="state-card-header">
+          <div class="state-card-title">Lily's read on you right now</div>
+          <div class="state-pill stable" id="state-pill">🟢 Stable</div>
+        </div>
+        <div class="state-summary" id="state-summary">Start chatting or log a moment — Lily will assess your state in real time.</div>
+        <div class="state-risk-bar"><div class="state-risk-fill" id="state-risk-fill" style="width:0%;background:var(--green)"></div></div>
+        <div class="state-meta" id="state-meta">Not yet assessed</div>
+      </div>
+
+      <!-- PIECE 3: Clinical flag — hidden by default -->
+      <div class="clinical-flag" id="clinical-flag">
+        <div class="cf-header">
+          <div class="cf-title">⚠ Lily thinks you should talk to someone</div>
+          <button class="cf-dismiss" onclick="dismissFlag()">I'm okay</button>
+        </div>
+        <div class="cf-msg">Based on what you've shared, it might help to speak with a professional. Lily works best alongside — not instead of — real support. You don't have to do this alone.</div>
+        <a class="cf-link" href="tel:18006624357">📞 SAMHSA Helpline — free, confidential — 1-800-662-4357</a>
+      </div>
+
     </div>
   </div>
 
@@ -1188,6 +1236,13 @@ next_checkin_minutes: 15-30 for high risk, 60-120 for moderate, 120+ for low.`;
     jsonEl.classList.add('show');
     document.getElementById('progress-state').textContent=orch.long_term_note||'Pipeline completed.';
 
+    // Update state card from pipeline output
+    if(predict) {
+      const lvl = predict.probability>0.7?'high-risk':predict.probability>0.4?'at-risk':'stable';
+      const summary = intervention?.message?.split('.')?.[0] + '.' || 'Pipeline complete.';
+      updateStateCard(predict.probability, summary, lvl);
+    }
+
     if(orch.escalate_to_professional) {
       await voliMsg("I want to flag something — what you're describing sounds intense. I can help, but for what you're going through, I'd genuinely recommend talking to a doctor or addiction counselor too.", false);
     }
@@ -1302,6 +1357,103 @@ async function quickAction(type) {
   showQR(['It was hard','What helped','Keep going']);
 }
 
+// ── PIECE 2 & 3: Passive chat analysis ──
+let chatMsgCount = 0;
+let flagDismissed = false;
+
+const CRISIS_KEYWORDS = [
+  'hopeless','give up','end it','hurt myself','harm myself',
+  'not worth it','suicidal','want to die',"don't want to be here",
+  "can't do this anymore",'self harm','self-harm'
+];
+
+function checkCrisisKeywords(text) {
+  const lower = text.toLowerCase();
+  return CRISIS_KEYWORDS.some(k => lower.includes(k));
+}
+
+function updateStateCard(risk, summary, level) {
+  // level: 'stable' | 'at-risk' | 'high-risk'
+  const pill = document.getElementById('state-pill');
+  const sumEl = document.getElementById('state-summary');
+  const fill = document.getElementById('state-risk-fill');
+  const meta = document.getElementById('state-meta');
+
+  const labels = { 'stable':'🟢 Stable', 'at-risk':'🟡 At risk', 'high-risk':'🔴 High risk' };
+  const colors = { 'stable':'var(--green)', 'at-risk':'var(--amber)', 'high-risk':'var(--red)' };
+
+  pill.className = 'state-pill ' + level;
+  pill.textContent = labels[level];
+  sumEl.textContent = summary;
+  fill.style.width = Math.round(risk * 100) + '%';
+  fill.style.background = colors[level];
+  meta.textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  // Show clinical flag if high risk and not dismissed
+  if (level === 'high-risk' && !flagDismissed) {
+    document.getElementById('clinical-flag').classList.add('visible');
+  }
+}
+
+function dismissFlag() {
+  flagDismissed = true;
+  document.getElementById('clinical-flag').classList.remove('visible');
+}
+
+async function passiveAnalysis() {
+  // Only run if we have enough chat history
+  if (chatHistory.length < 3) return;
+
+  // Check for crisis keywords first — no API needed
+  const recentText = chatHistory.slice(-6).map(m => m.content).join(' ');
+  if (checkCrisisKeywords(recentText) && !flagDismissed) {
+    document.getElementById('clinical-flag').classList.add('visible');
+    updateStateCard(0.9, "You've mentioned something that concerns Lily. Please consider reaching out for support.", 'high-risk');
+    // Flash Prediction Agent
+    setAgentStatus(1, 'running', '');
+    await sleep(800);
+    setAgentStatus(1, 'done', 'Crisis signal detected — flag raised');
+    return;
+  }
+
+  // Flash Prediction Agent visibly
+  setAgentStatus(1, 'running', '');
+
+  try {
+    const sys = `You are the Prediction Agent for Lily. Analyze the conversation and output ONLY valid JSON:
+{"probability":number,"level":"stable"|"at-risk"|"high-risk","summary":string}
+probability: 0.0–1.0 craving/relapse risk.
+level: stable if <0.4, at-risk if 0.4–0.7, high-risk if >0.7.
+summary: one warm plain-English sentence about the user's current state (max 20 words). No clinical jargon.`;
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        system: sys,
+        messages: [{role:'user', content: 'Recent conversation:\n' + chatHistory.slice(-6).map(m=>`${m.role}: ${m.content}`).join('\n')}],
+        max_tokens: 120
+      })
+    });
+    const d = await res.json();
+    const txt = (d.content||'').replace(/```json|```/g,'').trim();
+    let parsed;
+    try { parsed = JSON.parse(txt); }
+    catch(e) { const m=txt.match(/\{[\s\S]*\}/); parsed = m?JSON.parse(m[0]):null; }
+
+    if (parsed) {
+      updateStateCard(parsed.probability, parsed.summary, parsed.level);
+      setAgentStatus(1, 'done', `${Math.round(parsed.probability*100)}% risk · ${parsed.level}`);
+      // Update memory panel too
+      document.getElementById('mem-risk').innerHTML = `<strong>${Math.round(parsed.probability*100)}%</strong> · ${parsed.level}`;
+    } else {
+      setAgentStatus(1, 'idle', '');
+    }
+  } catch(e) {
+    setAgentStatus(1, 'idle', '');
+  }
+}
+
 // ── Chat ──
 const sleep = ms=>new Promise(r=>setTimeout(r,ms));
 function nowStr(){const d=new Date();return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();}
@@ -1324,12 +1476,24 @@ function rmTyping(){document.getElementById('typing')?.remove();}
 function showQR(opts){const row=document.getElementById('qr-row');row.style.display='flex';row.innerHTML=opts.map(o=>`<button class="qr" onclick="tapQR('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('');}
 function hideQR(){const r=document.getElementById('qr-row');r.style.display='none';r.innerHTML='';}
 
-async function tapQR(text){hideQR();addMsg('user',text);chatHistory.push({role:'user',content:text});await getReply(text,null);}
-async function sendMsg(){
+async function tapQR(text) {
+  hideQR();
+  addMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  chatMsgCount++;
+  if(chatMsgCount % 3 === 0) passiveAnalysis();
+  await getReply(text,null);
+}
+
+async function sendMsg() {
   const inp=document.getElementById('chat-in');const txt=inp.value.trim();
   if(!txt||typing)return;
   inp.value='';inp.style.height='auto';hideQR();
-  addMsg('user',txt);chatHistory.push({role:'user',content:txt});await getReply(txt,null);
+  addMsg('user',txt);
+  chatHistory.push({role:'user',content:txt});
+  chatMsgCount++;
+  if(chatMsgCount % 3 === 0) passiveAnalysis();
+  await getReply(txt,null);
 }
 
 async function voliMsg(text,instant){
